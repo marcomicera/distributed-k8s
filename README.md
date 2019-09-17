@@ -8,4 +8,4 @@
 
 ###### Kubernetes
 - [Reference](https://kubernetes.io/docs/reference/)
-- [`minikube`](https://github.com/kubernetes/minikube)
+- [`minikube`](https://github.com/kubernetes/minikube) ([documentation](https://minikube.sigs.k8s.io/docs/))
