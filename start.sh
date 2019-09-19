@@ -1,19 +1,23 @@
 #!/bin/bash
 
-PERFKIT_BENCHMARKER_TAR_NAME=v1.13.0.tar.gz
-PERFKIT_BENCHMARKER_RELEASE=https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/archive/${PERFKIT_BENCHMARKER_TAR_NAME}
-PERFKIT_BENCHMARKER_FLAGS=--kubectl\ $(which kubectl)\ --kubeconfig\ ~/.kube/config
+SLAVE_FOLDER=slave
+PKB_VERSION=1.13.0
+PKB_TAR=v${PKB_VERSION}.tar.gz
+PKB_FOLDER=PerfKitBenchmarker-${PKB_VERSION}
+PKB_URL=https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/archive/${PKB_TAR}
+PKB_FLAGS=--kubectl\ $(which kubectl)\ --kubeconfig\ ~/.kube/config
 
 # Installing PerfKit Benchmarker dependencies
-wget $PERFKIT_BENCHMARKER_RELEASE
-tar xzf $PERFKIT_BENCHMARKER_TAR_NAME
-rm $PERFKIT_BENCHMARKER_TAR_NAME
-cd PerfKitBenchmarker-1.13.0
+wget $PKB_URL
+tar xzf $PKB_TAR
+rm $PKB_TAR
+mv $PKB_FOLDER $SLAVE_FOLDER
+cd $SLAVE_FOLDER
 sudo pip install -r requirements.txt
 cd ..
 
 # Building the docker image
-docker/build.sh
+. docker/build.sh
 
 #
 # Kubernetes cluster configuration
@@ -27,3 +31,6 @@ docker/build.sh
 
 # Reboot the node?
 # sudo reboot
+
+# The image is ready to be used by Perfkit:
+# $SLAVE_FOLDER/pkb.py --image=ubuntu_ssh --kubectl\ $(which kubectl)\ --kubeconfig\ ~/.kube/config
