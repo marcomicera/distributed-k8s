@@ -1,16 +1,15 @@
 #!/bin/bash
 
+IMAGE=$SLAVE_FOLDER/ubuntu_ssh.tar.gz
+
 # Building the docker image
 docker build -t=ubuntu_ssh --force-rm=true docker
 
-# Save the imag
-docker save -o=ubuntu_ssh.tar.gz ubuntu_ssh
+# Save the image
+docker save -o=$IMAGE ubuntu_ssh
 
 # Copy it to each of the slave nodes
-# scp ubuntu_ssh.tar.gz file to each of slave nodes
+# scp $IMAGE file to each of slave nodes
 
 # Load the image on each of the slave nodes
-# docker load -i=ubuntu_ssh.tar.gz
-
-# The image is ready to be used by Perfkit:
-# ./pkb.py --image=ubuntu_ssh ...
+docker load -i=$IMAGE
