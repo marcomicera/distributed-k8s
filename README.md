@@ -16,7 +16,5 @@
   - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))
 - The [Prometheus](https://prometheus.io/) monitoring system
   - [Grafana](https://grafana.com/) for time series analytics
-
-###### Kubernetes
-- [Reference](https://kubernetes.io/docs/reference/)
-- [`minikube`](https://github.com/kubernetes/minikube) ([documentation](https://minikube.sigs.k8s.io/docs/))
+- [Kubernetes](https://kubernetes.io/docs/reference/)
+  - [`minikube`](https://github.com/kubernetes/minikube) (and its [documentation](https://minikube.sigs.k8s.io/docs/))
