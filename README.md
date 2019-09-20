@@ -19,9 +19,22 @@
     $ ./start.sh
     ```
 
+## Benchmarks comparison
+
+|                              | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
+|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
+|                              | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
+| [Google's PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker#kubernetes-configuration-and-credentials) |                                 |                               |                    |                   |                                              |                                    |
+| Sysbench                     | yes                             | yes                           | ?                  | ?                 | ?                                            | yes                                |
+| [PostgreSQL pg_bench](https://github.com/jberkus/pgKubernetesTutorial)          | yes                             |                               |                    |                   |                                              |                                    |
+| Geekbench 3                  |                                 | yes                           |                    |                   |                                              |                                    |
+| fio                          | yes<sup>([sw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348),[sr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8372),[rw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8396),[rr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8420))</sup>                             | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8471) | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348)<sup>`filesize`</sup> | no | no | no |
+| IOPing                       | yes                             | yes                           |                    |                   |                                              |                                    |
+| IOzone                       |                                 |                               |                    |                   |                                              |                                    |
+| Bonnie++                     |                                 |                               |                    |                   |                                              |                                    |
+
 #### References
-- [Benchmarks comparison](https://docs.google.com/spreadsheets/d/1053fTwR_PzUTqyQ0ITIH-JTwg4id1GHyoA8dWPFDg1M/edit?usp=sharing)
-  - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))
+- Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))
 - The [Prometheus](https://prometheus.io/) monitoring system
   - [Grafana](https://grafana.com/) for time series analytics
 - [Kubernetes](https://kubernetes.io/docs/reference/)
