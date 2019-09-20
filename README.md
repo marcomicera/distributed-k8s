@@ -21,45 +21,22 @@
 
 ## Benchmarks comparison
 
-#### In [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
+#### [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable in Kubernetes
 
 |                              | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
 |------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
 |                              | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
-| `aerospike`                                                         |   |   |   |   |   |   |
-| `bonnie++`                                                          |   |   |   |   |   |   |
-| `cassandra_ycsb`                                                    |   |   |   |   |   |   |
-| `cassandra_stress`                                                  |   |   |   |   |   |   |
-| `cloudsuite3.0`                                                     |   |   |   |   |   |   |
-| `cluster_boot`                                                      |   |   |   |   |   |   |
-| `coremark`                                                          |   |   |   |   |   |   |
-| `copy_throughput`                                                   |   |   |   |   |   |   |
-| `fio`                                                               | yes<sup>([sw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348),[sr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8372),[rw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8396),[rr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8420))</sup>                             | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8471) | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348)<sup>`filesize`</sup> | no | no | no |
-| [`gpu_pcie_bandwidth`](https://developer.nvidia.com/cuda-downloads) |   |   |   |   |   |   |
-| `hadoop_terasort`                                                   |   |   |   |   |   |   |
-| `hpcc`                                                              |   |   |   |   |   |   |
-| [`hpcg`](https://github.com/hpcg-benchmark/hpcg/)                   |   |   |   |   |   |   |
-| `iperf`                                                             |   |   |   |   |   |   |
-| `memtier_benchmark`                                                 |   |   |   |   |   |   |
-| `mesh_network`                                              |   |   |   |   |   |   |
-| `mongodb` (**Deprecated**)                                  |   |   |   |   |   |   |
-| `mongodb_ycsb`                                              |   |   |   |   |   |   |
-| [`multichase`](https://github.com/google/multichase)        |   |   |   |   |   |   |
-| `netperf`                                                   |   |   |   |   |   |   |
-| [`oldisim`](https://github.com/GoogleCloudPlatform/oldisim) |   |   |   |   |   |   |
-| `object_storage_service`                                    |   |   |   |   |   |   |
-| `pgbench`                                                   |   |   |   |   |   |   |
-| `ping`                                                      |   |   |   |   |   |   |
-| `silo`                                                      |   |   |   |   |   |   |
-| `scimark2`                                                  |   |   |   |   |   |   |
-| `speccpu2006`                                               |   |   |   |   |   |   |
-| [`SHOC`](https://github.com/vetter/shoc)                    |   |   |   |   |   |   |
-| `sysbench_oltp`                                             | yes                             | yes                           | ?                  | ?                 | ?                                            | yes                                |
-| [`TensorFlow`](https://github.com/tensorflow/tensorflow)    |   |   |   |   |   |   |
-| [`tomcat`](https://github.com/apache/tomcat)             |   |   |   |   |   |   |
-| [`unixbench`](https://github.com/kdlucas/byte-unixbench) |   |   |   |   |   |   |
-| [`wrk`](https://github.com/wg/wrk)                       |   |   |   |   |   |   |
-| [`ycsb`](https://github.com/brianfrankcooper/YCSB)       |   |   |   |   |   |   |
+| `block_storage_workload`     |   |   |   |   |   |   |
+| `cassandra_ycsb`             |   |   |   |   |   |   |
+| `cassandra_stress`           |   |   |   |   |   |   |
+| `cluster_boot`               |   |   |   |   |   |   |
+| `fio`                        | yes<sup>([sw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348),[sr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8372),[rw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8396),[rr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8420))</sup>                             | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8471) | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348)<sup>`filesize`</sup> | no | no | no |
+| `iperf`                      |   |   |   |   |   |   |
+| `mesh_network`               |   |   |   |   |   |   |
+| `mongodb_ycsb`               |   |   |   |   |   |   |
+| `netperf`                    |   |   |   |   |   |   |
+| `redis`                      |   |   |   |   |   |   |
+| `sysbench`                   | yes                             | yes                           | ?                  | ?                 | ?                                            | yes                                |
 
 #### Not included id [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
 
