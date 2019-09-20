@@ -1,11 +1,15 @@
 # `distributed-k8s`
 
-## `PerfkitBenchmarker`'s Kubernetes example
+## `PerfkitBenchmarker` + `minikube`
+1. Start `minikube` on your local machine:
+    ```bash
+    minikube start
+    ```
 1. Add the current user to the `docker` group:
     ```bash
     $ newgrp docker
     ```
-2. Start the main script:
+1. Launch `PerfkitBenchmarker`:
     ```bash
     $ chmod u+x start.sh
     $ ./start.sh
