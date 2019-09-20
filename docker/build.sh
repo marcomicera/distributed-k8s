@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE_ARCHIVE=$SLAVE_FOLDER/$IMAGE.tar.gz
+IMAGE_ARCHIVE=$PKB_FOLDER/$IMAGE.tar.gz
 
 # Building the docker image
 docker build -t=$IMAGE --force-rm=true docker
