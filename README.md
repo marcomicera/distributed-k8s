@@ -3,15 +3,19 @@
 ## `PerfkitBenchmarker` + `minikube`
 1. Start `minikube` on your local machine:
     ```bash
-    minikube start
+    $ minikube start
     ```
 1. Add the current user to the `docker` group:
     ```bash
     $ newgrp docker
     ```
+1. Setup `PerfkitBenchmarker` with Kubernetes:
+    ```bash
+    $ chmod u+x *.sh
+    $ ./setup.sh
+    ```
 1. Launch `PerfkitBenchmarker`:
     ```bash
-    $ chmod u+x start.sh
     $ ./start.sh
     ```
 
