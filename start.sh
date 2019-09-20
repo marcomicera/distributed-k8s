@@ -1,11 +1,13 @@
 #!/bin/bash
 
 SLAVE_FOLDER=slave
-PKB_REPO=git@github.com:GoogleCloudPlatform/PerfKitBenchmarker.git
-PKB_FLAGS=--kubectl\ $(which kubectl)\ --kubeconfig\ ~/.kube/config
+REPO=git@github.com:GoogleCloudPlatform/PerfKitBenchmarker.git
+KUBERNETES_FLAGS=--cloud=Kubernetes\ --kubectl=$(which kubectl)\ --kubeconfig=$HOME/.kube/config
+BENCHMARKS='iperf'
+IMAGE=ubuntu_ssh
 
 # Installing PerfKit Benchmarker dependencies
-git clone $PKB_REPO $SLAVE_FOLDER
+git clone $REPO $SLAVE_FOLDER
 cd $SLAVE_FOLDER
 sudo pip install -r requirements.txt
 cd ..
@@ -27,4 +29,4 @@ Environment=PATH=/opt/bin:/usr/bin:/usr/sbin:$PATH' | sudo tee /etc/systemd/syst
 # sudo reboot
 
 # The image is ready to be used by Perfkit:
-$SLAVE_FOLDER/pkb.py --image=ubuntu_ssh $PKB_FLAGS
+$SLAVE_FOLDER/pkb.py --image=$IMAGE --benchmarks=$BENCHMARKS $KUBERNETES_FLAGS
