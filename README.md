@@ -36,7 +36,6 @@
 | `mongodb_ycsb` (fails)       |   |   |   |   |   |   |
 | `netperf`                    |   |   |   |   |   |   |
 | `redis`                      |   |   |   |   |   |   |
-| `sysbench` (fails)           | yes                             | yes                           | ?                  | ?                 | ?                                            | yes                                |
 
 #### Not included id [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
 
