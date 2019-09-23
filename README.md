@@ -9,11 +9,6 @@
     ```bash
     $ newgrp docker
     ```
-1. Setup [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) with Kubernetes:
-    ```bash
-    $ chmod u+x *.sh
-    $ ./setup.sh
-    ```
 1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker):
     ```bash
     $ ./start.sh
