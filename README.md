@@ -27,16 +27,16 @@
 |------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
 |                              | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
 | `block_storage_workload`     | yes<sup>([sw](https://github.com/marcomicera/distributed-k8s/blob/78aafa0ff6d35d1f848951c05f7a70b3dff15f2b/results/block_storage_workload/pkb.log#L5964),[rr](https://github.com/marcomicera/distributed-k8s/blob/78aafa0ff6d35d1f848951c05f7a70b3dff15f2b/results/block_storage_workload/pkb.log#L5988),[sr](https://github.com/marcomicera/distributed-k8s/blob/78aafa0ff6d35d1f848951c05f7a70b3dff15f2b/results/block_storage_workload/pkb.log#L6012))</sup> | [yes](https://github.com/marcomicera/distributed-k8s/blob/78aafa0ff6d35d1f848951c05f7a70b3dff15f2b/results/block_storage_workload/pkb.log#L6037) | [yes](https://github.com/marcomicera/distributed-k8s/blob/78aafa0ff6d35d1f848951c05f7a70b3dff15f2b/results/block_storage_workload/pkb.log#L5964)<sup>`filesize`</sup> | no | no | no |
-| `cassandra_ycsb`             |   |   |   |   |   |   |
-| `cassandra_stress`           |   |   |   |   |   |   |
+| `cassandra_ycsb` (fails)     |   |   |   |   |   |   |
+| `cassandra_stress` (fails)   |   |   |   |   |   |   |
 | `cluster_boot`               |   |   |   |   |   |   |
 | `fio`                        | yes<sup>([sw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348),[sr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8372),[rw](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8396),[rr](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8420))</sup>                             | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8471) | [yes](https://github.com/marcomicera/distributed-k8s/blob/fd2c29cb7750840c8558451f7002c697c06ce996/results/fio/pkb.log#L8348)<sup>`filesize`</sup> | no | no | no |
-| `iperf`                      |   |   |   |   |   |   |
+| `iperf`                      | [yes](https://github.com/marcomicera/distributed-k8s/blob/ea6832ce5385a506135140c4e6a0d48416d32411/results/mesh_network/pkb.log#L4386) | [yes](https://github.com/marcomicera/distributed-k8s/blob/ea6832ce5385a506135140c4e6a0d48416d32411/results/mesh_network/pkb.log#L4389) | no | no | no | no |
 | `mesh_network`               |   |   |   |   |   |   |
-| `mongodb_ycsb`               |   |   |   |   |   |   |
+| `mongodb_ycsb` (fails)       |   |   |   |   |   |   |
 | `netperf`                    |   |   |   |   |   |   |
 | `redis`                      |   |   |   |   |   |   |
-| `sysbench`                   | yes                             | yes                           | ?                  | ?                 | ?                                            | yes                                |
+| `sysbench` (fails)           | yes                             | yes                           | ?                  | ?                 | ?                                            | yes                                |
 
 #### Not included id [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
 

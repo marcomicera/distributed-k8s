@@ -9,9 +9,6 @@ cd $PKB_FOLDER
 sudo pip install -r requirements.txt
 cd ..
 
-# Building the docker image
-. docker/build.sh
-
 # Kubernetes cluster configuration
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
 sudo touch /etc/systemd/system/kubelet.service.d/10-env.conf
