@@ -13,7 +13,10 @@ BENCHMARKS=fio
 KUBERNETES_FLAGS=--cloud=Kubernetes\ --kubectl=$(which kubectl)\ --kubeconfig=$HOME/.kube/config\ --kubernetes_anti_affinity=false
 REDIS_FLAGS="--redis_clients `expr $THREADS - 1`"
 
-# Installing PerfKit Benchmarker dependencies
+# Python 2.7 is required by PerfKitBenchmarker
+sudo apt install python python-pip -y
+
+# Installing PerfKitBenchmarker dependencies
 git clone $REPO $PKB_FOLDER
 cd $PKB_FOLDER
 sudo pip install -r requirements.txt
