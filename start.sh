@@ -15,6 +15,7 @@ REPO=git@github.com:marcomicera/PerfKitBenchmarker.git
 # Benchmarks config
 THREADS=4
 IMAGE=ubuntu
+PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE
 KUBERNETES_FLAGS=--cloud=Kubernetes\ --kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\ --kubernetes_anti_affinity=false
 
 # Which benchmarks can be run on Kubernetes with PKB
@@ -38,10 +39,10 @@ cassandra_stress_FLAGS=
 cluster_boot_FLAGS=
 fio_FLAGS=
 iperf_FLAGS=
-mesh_network_FLAGS=
+mesh_network_FLAGS=--num_connections=1\ --num_iterations=1\ --num_vms=10
 mongodb_ycsb_FLAGS=
 netperf_FLAGS=
-redis_FLAGS="--redis_clients $((THREADS - 1))"
+redis_FLAGS=--redis_clients=$((THREADS - 1))
 
 # Info
 if [ "$VERBOSE" = true ] ; then
@@ -68,14 +69,9 @@ for BENCHMARK_TO_RUN in "$@"; do
   if [[ " ${AVAILABLE_BENCHMARKS[@]} " =~ ${BENCHMARK_TO_RUN} ]]; then
     declare "BENCHMARK_FLAGS=${BENCHMARK_TO_RUN}_FLAGS"
     echo Running the "$BENCHMARK_TO_RUN" benchmark with the following flags: "${!BENCHMARK_FLAGS}"...
-#    $PKB_FOLDER/pkb.py --max_concurrent_threads=$THREADS --image=$IMAGE --benchmarks="$BENCHMARK_TO_RUN" "$KUBERNETES_FLAGS" # $REDIS_FLAGS
-    echo ..."$BENCHMARK_TO_RUN" benchmark completed.
+    $PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $BENCHMARK_FLAGS $KUBERNETES_FLAGS
+    echo ...done with "$BENCHMARK_TO_RUN".
   else
     echo "$BENCHMARK_TO_RUN" is not supported. Skipping it...
   fi
 done
-
-
-
-
-
