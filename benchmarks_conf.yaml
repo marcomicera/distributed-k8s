@@ -3,10 +3,12 @@ flags:
   kubernetes_anti_affinity: false
 
 mesh_network:
-  vm_groups:
+  name: mesh_network
+  flag_zip_defs:
     default:
       vm_count: 7
-redis:
-  vm_groups:
-    default:
-      redis_clients: 6
+
+#redis:
+#  vm_groups:
+#    default:
+#      redis_clients: 6
