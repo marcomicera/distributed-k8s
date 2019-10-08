@@ -1,0 +1,12 @@
+flags:
+  cloud: Kubernetes
+  kubernetes_anti_affinity: false
+
+mesh_network:
+  vm_groups:
+    default:
+      vm_count: 7
+redis:
+  vm_groups:
+    default:
+      redis_clients: 6
