@@ -1,25 +1,32 @@
 # `distributed-k8s`
 
-## [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) + [`minikube`](https://github.com/kubernetes/minikube)
-1. Start [`minikube`](https://github.com/kubernetes/minikube) on your local machine:
+## [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable in Kubernetes
+Set difference between the [Kubernetes-compatible benchmark list](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/benchmark_sets.py#L177) and its [updated unsupported set](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/providers/kubernetes/provider_info.py#L29).
+- `block_storage_workload`
+- `cassandra_ycsb`
+- `cassandra_stress`
+- `cluster_boot`
+- `fio`
+- `iperf`
+- `mesh_network`
+- `mongodb_ycsb`
+- `netperf`
+- `redis`
+
+## How to run it
+1. Clone this repository:
     ```bash
-    $ minikube start
-    ```
-1. Add the current user to the `docker` group:
+   $ git clone git@github.com:marcomicera/distributed-k8s.git
+   $ cd distributed-k8s || exit
+   ```
+1. Set benchmark-specific flags in the [`benchmarks_conf.yaml` configuration file](benchmarks_conf.yaml)
+1. Set other general config paramers in the [`start.sh` shell script](start.sh)
+1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) specifying the [benchmarks](https://github.com/marcomicera/distributed-k8s#perfkitbenchmarker-supported-benchmarks-runnable-in-kubernetes) to be run:
     ```bash
-    $ newgrp docker
-    ```
-1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker):
-    ```bash
-    $ ./start.sh
+    $ ./start.sh <benchmark_list>
     ```
 
-## Benchmarks comparison
-
-#### [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable in Kubernetes
-- [Complete list](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/tree/master/perfkitbenchmarker/linux_benchmarks)
-- [Kubernetes benchmark set](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/benchmark_sets.py#L177)
-  - [Updated unsupported set](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/providers/kubernetes/provider_info.py#L29)
+## Benchmarks comparison table
 
 |                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
 |------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
@@ -35,7 +42,18 @@
 | [`netperf`](https://github.com/HewlettPackard/netperf)<br>(results, [info](https://hewlettpackard.github.io/netperf/training/Netperf.html#0.2.2Z141Z1.SUJSTF.7R2DBD.E))                    | [yes](https://hewlettpackard.github.io/netperf/training/Netperf.html#0.2.2Z141Z1.SUJSTF.7R2DBD.F) |   |   |   |   |   |   |
 | [`redis`](https://redis.io/)<br><sub><sup>a.k.a. [`memtier_benchmark`](https://github.com/RedisLabs/memtier_benchmark)</sup></sub><br>(results, [info](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/linux_benchmarks/redis_benchmark.py#L15))                      | [yes](https://github.com/RedisLabs/memtier_benchmark#connections) | yes<br><sub><sup>([`pkb.log`](results/local/redis/pkb.log):90493)</sub></sup> | yes<br><sub><sup>([`pkb.log`](results/local/redis/pkb.log):90523)</sub></sup> | no | no | *yes*<br><sub><sup>(([`pkb.log`](results/local/redis/pkb.log):88840)</sub></sup> | no |
 
-#### Not included id [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
+#### Run it locally with [`minikube`](https://github.com/kubernetes/minikube)
+1. Start [`minikube`](https://github.com/kubernetes/minikube) on your local machine:
+    ```bash
+    $ minikube start
+    ```
+1. Add the current user to the `docker` group:
+    ```bash
+    $ newgrp docker
+    ```
+1. [Run it](https://github.com/marcomicera/distributed-k8s#how-to-run-it)
+
+#### Other potentially insteresting benchmarks not included id [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
 
 |                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
 |------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
