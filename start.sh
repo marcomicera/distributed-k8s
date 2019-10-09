@@ -37,7 +37,7 @@ BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 
 # Command line benchmark-specific flags.
 # These flags will override the ones in the configuration file.
-# To be used when flag values depend on some other factors and
+# To be used when flag values depend on some other factors and/or
 # cannot be expressed in the YAML configuration file.
 block_storage_workload_FLAGS=
 cassandra_ycsb_FLAGS=
