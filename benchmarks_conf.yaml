@@ -11,8 +11,7 @@ block_storage_workload:
       vm_count: 11
 
 cassandra_ycsb:
-  description: >
-    Run YCSB against Cassandra.
+  description: Run YCSB against Cassandra.
   vm_groups:
     workers:
       vm_count: 2
@@ -28,21 +27,50 @@ cassandra_stress:
       vm_count: 5
 
 cluster_boot:
+  description: Create a cluster, record all times to boot.
   vm_groups:
     default:
       vm_count: 6
+  cluster_boot_time_reboot: False
 
-fio:
+fio: # cannot set vm_count
+  description: >
+    Runs fio in sequential, random, read and write modes.
 
 iperf:
+  description: Run iperf
+  vm_groups:
+    vm_1:
+      vm_count: 3
+    vm_2:
+      vm_count: 3
 
 mesh_network:
+  description: >
+    Measures VM to VM cross section bandwidth in
+    a mesh network.
+  vm_groups:
+    default:
+      vm_count: 5 # FIXME does not work
 
 mongodb_ycsb:
+  description: Run YCSB against a single MongoDB node.
+  vm_groups:
+    workers:
+      vm_count: 3
+    clients:
+      vm_count: 4
 
-netperf:
+netperf: # cannot set vm_count
+  description: Run TCP_RR, TCP_CRR, UDP_RR and TCP_STREAM
+    vm_groups:
+      vm_1:
+        vm_count: 3
+      vm_2:
+       vm_count: 4
 
-#redis:
-#  vm_groups:
-#    default:
-#      redis_clients: 6
+redis:
+  description: Run YCSB against a single Redis server.
+  vm_groups:
+    clients:
+      vm_count: 7 # FIXME does not work
