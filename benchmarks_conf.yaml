@@ -2,11 +2,45 @@ flags:
   cloud: Kubernetes
   kubernetes_anti_affinity: false
 
-mesh_network:
-  name: mesh_network
-  flag_zip_defs:
+block_storage_workload:
+  description: >
+    Runs FIO in sequential, random, read and
+    write modes to simulate various scenarios.
+  vm_groups:
     default:
-      vm_count: 7
+      vm_count: 11
+
+cassandra_ycsb:
+  description: >
+    Run YCSB against Cassandra.
+  vm_groups:
+    workers:
+      vm_count: 2
+    clients:
+      vm_count: 5
+
+cassandra_stress:
+  description: Benchmark Cassandra using cassandra-stress
+  vm_groups:
+    workers:
+      vm_count: 2
+    client:
+      vm_count: 5
+
+cluster_boot:
+  vm_groups:
+    default:
+      vm_count: 6
+
+fio:
+
+iperf:
+
+mesh_network:
+
+mongodb_ycsb:
+
+netperf:
 
 #redis:
 #  vm_groups:
