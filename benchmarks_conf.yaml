@@ -63,11 +63,6 @@ mongodb_ycsb:
 
 netperf: # cannot set vm_count
   description: Run TCP_RR, TCP_CRR, UDP_RR and TCP_STREAM
-    vm_groups:
-      vm_1:
-        vm_count: 3
-      vm_2:
-       vm_count: 4
 
 redis:
   description: Run YCSB against a single Redis server.
