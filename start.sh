@@ -15,8 +15,11 @@ REPO=git@github.com:marcomicera/PerfKitBenchmarker.git
 # Benchmarks config
 THREADS=4
 IMAGE=ubuntu
-PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\
-KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\
+CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
+RESULTS_DIR=./results/$CURRENT_DATE
+PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\ --temp_dir=$RESULTS_DIR\
+BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
+KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE\
 
 # Which benchmarks can be run on Kubernetes with PKB
 AVAILABLE_BENCHMARKS=(
@@ -40,9 +43,6 @@ else
   BENCHMARKS_TO_RUN=("$@")
 fi
 echo "About to launch the following benchmarks: ${BENCHMARKS_TO_RUN[@]}"
-
-# Benchmark-specific flags configuration file
-BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 
 # Command line benchmark-specific flags.
 # These flags will override the ones in the configuration file.
@@ -85,8 +85,8 @@ for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do
   if [[ " ${AVAILABLE_BENCHMARKS[@]} " =~ ${BENCHMARK_TO_RUN} ]]; then
     declare "BENCHMARK_FLAGS=${BENCHMARK_TO_RUN}_FLAGS"
     echo Running the "$BENCHMARK_TO_RUN" benchmark with the following flags: "${!BENCHMARK_FLAGS}"...
-    $PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS --benchmark_config_file=$BENCHMARKS_CONFIG_FILE $BENCHMARK_FLAGS
-    echo ...done with "$BENCHMARK_TO_RUN". Results in $BENCHMARK_RESULTS
+    $PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS $BENCHMARK_FLAGS
+    echo ...done with "$BENCHMARK_TO_RUN". Results in $RESULTS_DIR
   else
     echo "$BENCHMARK_TO_RUN" is not supported. Skipping it...
   fi
