@@ -31,7 +31,6 @@ cluster_boot:
   vm_groups:
     default:
       vm_count: 6
-  cluster_boot_time_reboot: False
 
 fio: # cannot set vm_count
   description: >
