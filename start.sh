@@ -3,6 +3,7 @@
 # Script usage help message
 if (( $# < 1 )); then
     echo "Usage: ./start.sh <benchmarks_to_run>"
+    echo "Use 'all' to run all Kubernetes-compatible benchmarks"
     exit 1
 fi
 VERBOSE=false
@@ -31,6 +32,14 @@ AVAILABLE_BENCHMARKS=(
     netperf
     redis
 )
+
+# Check whether to run all benchmarks or not
+BENCHMARKS_TO_RUN=()
+if [ "$1" == "all" ] ; then
+  BENCHMARKS_TO_RUN=("${AVAILABLE_BENCHMARKS[@]}")
+else
+  BENCHMARKS_TO_RUN=("$@")
+fi
 
 # Benchmark-specific flags configuration file
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
@@ -73,7 +82,7 @@ cd ..
 
 # Running all benchmarks
 echo Results will available in /tmp/perfkitbenchmarker/runs/"$RUN_URI"
-for BENCHMARK_TO_RUN in "$@"; do
+for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do
   if [[ " ${AVAILABLE_BENCHMARKS[@]} " =~ ${BENCHMARK_TO_RUN} ]]; then
     declare "BENCHMARK_FLAGS=${BENCHMARK_TO_RUN}_FLAGS"
     echo Running the "$BENCHMARK_TO_RUN" benchmark with the following flags: "${!BENCHMARK_FLAGS}"...
