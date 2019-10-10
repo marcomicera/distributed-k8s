@@ -1,9 +1,24 @@
 #!/bin/bash
 
+# Which benchmarks can be run on Kubernetes with PKB
+AVAILABLE_BENCHMARKS=(
+    block_storage_workload
+    cassandra_ycsb
+    cassandra_stress
+    cluster_boot
+    fio
+    iperf
+    mesh_network
+    mongodb_ycsb
+    netperf
+    redis
+)
+
 # Script usage help message
 if (( $# < 1 )); then
-    echo "Usage: ./start.sh <benchmarks_to_run>"
-    echo "Use 'all' to run all Kubernetes-compatible benchmarks"
+    printf "Usage: ./start.sh <benchmarks_to_run>\n\nSupported benchmarks on Kubernetes: {\n"
+    printf '\t%s\n' "${AVAILABLE_BENCHMARKS[@]}"
+    printf "}\n\nOr simply type 'all' to run all of them.\n"
     exit 1
 fi
 VERBOSE=false
@@ -20,20 +35,6 @@ RESULTS_DIR=./results/tmp/$CURRENT_DATE
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\ --temp_dir\ $RESULTS_DIR
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
-
-# Which benchmarks can be run on Kubernetes with PKB
-AVAILABLE_BENCHMARKS=(
-    block_storage_workload
-    cassandra_ycsb
-    cassandra_stress
-    cluster_boot
-    fio
-    iperf
-    mesh_network
-    mongodb_ycsb
-    netperf
-    redis
-)
 
 # Check whether to run all benchmarks or not
 BENCHMARKS_TO_RUN=()
