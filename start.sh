@@ -15,8 +15,8 @@ REPO=git@github.com:marcomicera/PerfKitBenchmarker.git
 # Benchmarks config
 THREADS=4
 IMAGE=ubuntu
-RUN_URI=$(uuidgen | head -c8)
-PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\ --run_uri=$RUN_URI
+BASE_RUN_URI=$(uuidgen | head -c8)
+PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\
 
 # Which benchmarks can be run on Kubernetes with PKB
@@ -40,6 +40,7 @@ if [ "$1" == "all" ] ; then
 else
   BENCHMARKS_TO_RUN=("$@")
 fi
+echo "About to launch the following benchmarks: ${BENCHMARKS_TO_RUN[@]}"
 
 # Benchmark-specific flags configuration file
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
@@ -81,13 +82,14 @@ sudo pip install -r requirements.txt
 cd ..
 
 # Running all benchmarks
-echo Results will available in /tmp/perfkitbenchmarker/runs/"$RUN_URI"
+echo Results will available in /tmp/perfkitbenchmarker/runs/"$BASE_RUN_URI"
 for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do
   if [[ " ${AVAILABLE_BENCHMARKS[@]} " =~ ${BENCHMARK_TO_RUN} ]]; then
     declare "BENCHMARK_FLAGS=${BENCHMARK_TO_RUN}_FLAGS"
+    declare "BENCHMARK_RESULTS=${BASE_RUN_URI}-${BENCHMARK_TO_RUN}"
     echo Running the "$BENCHMARK_TO_RUN" benchmark with the following flags: "${!BENCHMARK_FLAGS}"...
-    $PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS --benchmark_config_file=$BENCHMARKS_CONFIG_FILE $BENCHMARK_FLAGS
-    echo ...done with "$BENCHMARK_TO_RUN".
+    $PKB_FOLDER/pkb.py $PKB_FLAGS --run_uri=$BENCHMARK_RESULTS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS --benchmark_config_file=$BENCHMARKS_CONFIG_FILE $BENCHMARK_FLAGS
+    echo ...done with "$BENCHMARK_TO_RUN". Results in $BENCHMARK_RESULTS
   else
     echo "$BENCHMARK_TO_RUN" is not supported. Skipping it...
   fi
