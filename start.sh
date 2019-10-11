@@ -32,7 +32,8 @@ THREADS=4
 IMAGE=ubuntu
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 RESULTS_DIR=./results/tmp/$CURRENT_DATE
-PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\ --temp_dir\ $RESULTS_DIR
+CSV_RESULTS=$RESULTS_DIR/results.csv
+PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 
