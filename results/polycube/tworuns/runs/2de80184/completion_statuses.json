@@ -1,0 +1,1 @@
+{"name": "cluster_boot", "status": "SUCCEEDED", "flags": {"cloud": "Kubernetes", "kubernetes_anti_affinity": false}}

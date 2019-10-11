@@ -1,6 +1,14 @@
-results/tmp
-venv
-pkb
-PerfKitBenchmarker*
+# Misc
 ubuntu_ssh.*
 .idea
+venv
+
+# PerfkitBenchmarker
+pkb
+PerfKitBenchmarker*
+
+# Results
+results/tmp
+*_keyfile*
+*.pem
+ssh_config
