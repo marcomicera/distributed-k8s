@@ -13,20 +13,9 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 - `netperf`
 - `redis`
 
-## How to run it
-1. Clone this repository:
-    ```bash
-   $ git clone git@github.com:marcomicera/distributed-k8s.git
-   $ cd distributed-k8s || exit
-   ```
-1. Set benchmark-specific flags in the [`benchmarks_conf.yaml` configuration file](benchmarks_conf.yaml)
-1. Set other general config paramers in the [`start.sh` shell script](start.sh)
-1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) specifying the [benchmarks](https://github.com/marcomicera/distributed-k8s#perfkitbenchmarker-supported-benchmarks-runnable-in-kubernetes) to be run:
-    ```bash
-    $ ./start.sh <benchmark_list>
-    ```
-
-## Benchmarks comparison table
+<details>
+<summary>Comparison table</summary>
+<br>
 
 |                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
 |------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
@@ -42,7 +31,39 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 | [`netperf`](https://github.com/HewlettPackard/netperf)<br>(results, [info](https://hewlettpackard.github.io/netperf/training/Netperf.html#0.2.2Z141Z1.SUJSTF.7R2DBD.E))                    | [yes](https://hewlettpackard.github.io/netperf/training/Netperf.html#0.2.2Z141Z1.SUJSTF.7R2DBD.F) |   |   |   |   |   |   |
 | [`redis`](https://redis.io/)<br><sub><sup>a.k.a. [`memtier_benchmark`](https://github.com/RedisLabs/memtier_benchmark)</sup></sub><br>(results, [info](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/linux_benchmarks/redis_benchmark.py#L15))                      | [yes](https://github.com/RedisLabs/memtier_benchmark#connections) | yes<br><sub><sup>([`pkb.log`](results/local/redis/pkb.log):90493)</sub></sup> | yes<br><sub><sup>([`pkb.log`](results/local/redis/pkb.log):90523)</sub></sup> | no | no | *yes*<br><sub><sup>(([`pkb.log`](results/local/redis/pkb.log):88840)</sub></sup> | no |
 
-#### Run it locally with [`minikube`](https://github.com/kubernetes/minikube)
+</details>
+
+<details>
+<summary>Other potentially insteresting benchmarks not included in PerfKitBenchmarker</summary>
+<br>
+
+|                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
+|------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
+|                              | <sub><sup>Requires the cooperation of multiple nodes</sup></sub> | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
+| [PostgreSQL pg_bench](https://github.com/jberkus/pgKubernetesTutorial)<br>(results, info)          |                                 | yes                             |                               |                    |                   |                                              |                                    |
+| Geekbench 3<br>(results, info)                  |                                 |                                 | yes                           |                    |                   |                                              |                                    |
+| IOPing<br>(results, info)                       |                                 | yes                             | yes                           |                    |                   |                                              |                                    |
+| IOzone<br>(results, info)                       |                                 |                                 |                               |                    |                   |                                              |                                    |
+
+</details>
+
+## How to run it
+1. Clone this repository:
+    ```bash
+   $ git clone git@github.com:marcomicera/distributed-k8s.git
+   $ cd distributed-k8s || exit
+   ```
+1. Set benchmark-specific flags in the [`benchmarks_conf.yaml` configuration file](benchmarks_conf.yaml)
+1. Set other general config paramers in the [`start.sh` shell script](start.sh)
+1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) specifying the [benchmarks](https://github.com/marcomicera/distributed-k8s#perfkitbenchmarker-supported-benchmarks-runnable-in-kubernetes) to be run:
+    ```bash
+    $ ./start.sh <benchmark_list>
+    ```
+
+<details>
+<summary>Run it locally</summary>
+<br>
+
 1. Start [`minikube`](https://github.com/kubernetes/minikube) on your local machine:
     ```bash
     $ minikube start
@@ -53,15 +74,7 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
     ```
 1. [Run it](https://github.com/marcomicera/distributed-k8s#how-to-run-it)
 
-#### Other potentially insteresting benchmarks not included id [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)
-
-|                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
-|------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
-|                              | <sub><sup>Requires the cooperation of multiple nodes</sup></sub> | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
-| [PostgreSQL pg_bench](https://github.com/jberkus/pgKubernetesTutorial)<br>(results, info)          |                                 | yes                             |                               |                    |                   |                                              |                                    |
-| Geekbench 3<br>(results, info)                  |                                 |                                 | yes                           |                    |                   |                                              |                                    |
-| IOPing<br>(results, info)                       |                                 | yes                             | yes                           |                    |                   |                                              |                                    |
-| IOzone<br>(results, info)                       |                                 |                                 |                               |                    |                   |                                              |                                    |
+</details>
 
 #### References
 - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))
