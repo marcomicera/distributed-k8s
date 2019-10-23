@@ -72,7 +72,7 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
     ```bash
     $ newgrp docker
     ```
-1. [Run it](https://github.com/marcomicera/distributed-k8s#how-to-run-it)
+1. [Run it](#how-to-run-it)
 
 </details>
 
