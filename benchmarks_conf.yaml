@@ -40,9 +40,9 @@ iperf:
   description: Run iperf
   vm_groups:
     vm_1:
-      vm_count: 3
+      vm_count: 1 # cannot be changed
     vm_2:
-      vm_count: 3
+      vm_count: 1 # cannot be changed
 
 mesh_network:
   description: >
