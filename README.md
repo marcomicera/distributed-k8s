@@ -72,6 +72,10 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
     ```bash
     $ newgrp docker
     ```
+1. Run a local Docker registry:
+    ```bash
+    $ docker run -d -p 5000:5000 --restart=always --name registry registry:2
+    ```
 1. [Run it](https://github.com/marcomicera/distributed-k8s#how-to-run-it)
 
 </details>
