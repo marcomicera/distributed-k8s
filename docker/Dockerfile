@@ -2,10 +2,13 @@ FROM ubuntu:trusty
 
 RUN apt-get update && apt-get install -y sudo
 
-# block_storage_workload, fio
-RUN apt-get install -y libaio-dev libaio1 bc zlib1g-dev autoconf libtool build-essential git
+# Required by all benchmarks
+RUN apt-get install -y git apt-utils
 
-# cassandra_ycsb
+# block_storage_workload, fio
+RUN apt-get install -y libaio-dev libaio1 bc zlib1g-dev autoconf libtool build-essential
+
+# cassandra_ycsb, cassandra_stress
 RUN apt-get install -y software-properties-common
 
 # SSH
