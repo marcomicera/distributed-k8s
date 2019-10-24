@@ -8,8 +8,12 @@ RUN apt-get install -y git apt-utils
 # block_storage_workload, fio
 RUN apt-get install -y libaio-dev libaio1 bc zlib1g-dev autoconf libtool build-essential
 
+# fio
+RUN apt-get install -y python-pip
+RUN sudo pip install --upgrade pip
+
 # cassandra_ycsb, cassandra_stress
-RUN apt-get install -y software-properties-common
+RUN apt-get install -y software-properties-common cpio
 
 # SSH
 RUN apt-get install -y ssh
