@@ -80,7 +80,7 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
         ```
     2. Build the Docker image:
         ```bash
-        $ docker build -t sudobuntu docker/ && docker tag sudobuntu:latest marcomicera/sudobuntu
+        $ docker build -t dk8s-pkb docker/dk8s-pkb/ && docker tag dk8s-pkb:latest marcomicera/dk8s-pkb
         ```
 
 1. [Run it](#how-to-run-it)

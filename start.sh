@@ -28,18 +28,12 @@ PKB_FOLDER=pkb
 REPO=git@github.com:marcomicera/PerfKitBenchmarker.git
 
 # Benchmarks config
-CRONJOB=false # when true, creates a cronjob
-DRY_RUN=false
 THREADS=4
-IMAGE=marcomicera/sudobuntu:latest
+PKB_IMAGE=marcomicera/dk8s-pkb:latest
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 RESULTS_DIR=./results/tmp/$CURRENT_DATE
 CSV_RESULTS=$RESULTS_DIR/results.csv
-PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a
-KUBECTL_FLAGS=-o\ yaml
-if [ "$DRY_RUN" = true ] ; then
-  KUBECTL_FLAGS+=\ --dry-run
-fi
+PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 if [ "$CRONJOB" = true ] ; then
@@ -98,15 +92,9 @@ git clone git@gist.github.com:4ea9f95c89f15e0f79cd9b2d62ae47cb.git scripts/kube
 for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do
   if [[ " ${AVAILABLE_BENCHMARKS[@]} " =~ ${BENCHMARK_TO_RUN} ]]; then
     declare "BENCHMARK_FLAGS=${BENCHMARK_TO_RUN}_FLAGS"
-    if [ "$CRONJOB" = true ] ; then
-      echo Launching a "$BENCHMARK_TO_RUN" CronJob with the following flags: "${!BENCHMARK_FLAGS}"...
-      kubectl run $KUBECTL_FLAGS "cron-$(sed s/_/-/g <<<"$BENCHMARK_TO_RUN")-$(uuidgen | head -c8)" --schedule="*/1 * * * *" --restart=OnFailure --image=busybox -- /bin/bash -c "$PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS $BENCHMARK_FLAGS"
-      echo ..."$BENCHMARK_TO_RUN" CronJob launched. Results will be stored in $RESULTS_DIR.
-    else
-      echo Running the "$BENCHMARK_TO_RUN" benchmark with the following flags: "${!BENCHMARK_FLAGS}"...
-      $PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS $BENCHMARK_FLAGS
-      echo ...done with "$BENCHMARK_TO_RUN". Results available in $RESULTS_DIR.
-    fi
+    echo Running the "$BENCHMARK_TO_RUN" benchmark with the following flags: "${!BENCHMARK_FLAGS}"...
+    $PKB_FOLDER/pkb.py $PKB_FLAGS --benchmarks=$BENCHMARK_TO_RUN $KUBERNETES_FLAGS $BENCHMARK_FLAGS
+    echo ...done with "$BENCHMARK_TO_RUN". Results available in $RESULTS_DIR.
   else
     echo "$BENCHMARK_TO_RUN" is not supported. Skipping it...
   fi
