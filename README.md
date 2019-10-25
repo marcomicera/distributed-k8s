@@ -91,7 +91,7 @@ When you're done:
     ```
 1. Remove its container:
     ```bash
-    $ docker container stop registry && docker container rm -v registry
+    $ docker container rm -v registry
     ```
 1. Stop [`minikube`](https://github.com/kubernetes/minikube);
     ```bash
