@@ -66,7 +66,7 @@ kubectl run $KUBECTL_FLAGS \
   --schedule="*/1 * * * *" \
   --restart=OnFailure \
   --image=$IMAGE \
-  -- /bin/sh -c "./start.sh ${AVAILABLE_BENCHMARKS[@]}; /bin/sh"
+  -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh"
 if [ "$DRY_RUN" = false ] ; then
   echo ...CronJob launched.
 fi
