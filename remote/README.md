@@ -4,6 +4,6 @@ In order for these scripts to work, `~/.ssh/config` needs to have an entry calle
 ```
 Host distributed-k8s
   HostName <IP_ADDRESS>
-  User <USERNAME>
+  User kubernetes
   IdentityFile <PRIVATE_KEY>
 ```
