@@ -23,10 +23,6 @@ if (( $# < 1 )); then
 fi
 VERBOSE=false
 
-# PKB repo
-PKB_FOLDER=pkb
-REPO=git@github.com:marcomicera/PerfKitBenchmarker.git
-
 # Benchmarks config
 THREADS=4
 PKB_IMAGE=marcomicera/dk8s-pkb:latest
@@ -78,15 +74,10 @@ echo Running \'sudo apt install python python-pip -y\'...
 sudo apt install python python-pip -y
 
 # Installing PerfKitBenchmarker dependencies
-echo Cloning the PerfKitBenchmarker repository...
-git clone $REPO $PKB_FOLDER
-echo ...repository successfully cloned.
+PKB_FOLDER=pkb
 cd $PKB_FOLDER || exit
 sudo pip install -r requirements.txt
 cd ..
-
-# Cloning Kubernetes scripts gist
-git clone git@gist.github.com:4ea9f95c89f15e0f79cd9b2d62ae47cb.git scripts/kube
 
 # Running all benchmarks
 for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do
