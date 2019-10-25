@@ -72,8 +72,32 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
     ```bash
     $ newgrp docker
     ```
+
+1.  To use a local Docker image:
+    1. Run a [local Docker registry](https://docs.docker.com/registry/deploying/):
+        ```bash
+        $ docker run -d -p 5000:5000 --restart=always --name registry registry:2
+        ```
+    2. Build the Docker image:
+        ```bash
+        $ docker build -t sudobuntu docker/ && docker tag sudobuntu:latest marcomicera/sudobuntu
+        ```
+
 1. [Run it](#how-to-run-it)
 
+When you're done:
+1. Stop the local Docker registry:
+    ```bash
+    $ docker container stop registry
+    ```
+1. Remove its container:
+    ```bash
+    $ docker container rm -v registry
+    ```
+1. Stop [`minikube`](https://github.com/kubernetes/minikube);
+    ```bash
+    $ minikube stop
+    ```
 </details>
 
 #### References
