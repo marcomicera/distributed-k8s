@@ -3,10 +3,6 @@ ubuntu_ssh.*
 .idea
 venv
 
-# PerfkitBenchmarker
-pkb
-PerfKitBenchmarker*
-
 # Results
 results/tmp
 *_keyfile*

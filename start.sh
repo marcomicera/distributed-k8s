@@ -91,6 +91,9 @@ cd $PKB_FOLDER || exit
 sudo pip install -r requirements.txt
 cd ..
 
+# Cloning Kubernetes scripts gist
+git clone git@gist.github.com:4ea9f95c89f15e0f79cd9b2d62ae47cb.git scripts/kube
+
 # Running all benchmarks
 for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do
   if [[ " ${AVAILABLE_BENCHMARKS[@]} " =~ ${BENCHMARK_TO_RUN} ]]; then
