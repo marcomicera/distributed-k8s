@@ -72,6 +72,7 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
     ```bash
     $ newgrp docker
     ```
+
 1.  To use a local Docker image:
     1. Run a [local Docker registry](https://docs.docker.com/registry/deploying/):
         ```bash
