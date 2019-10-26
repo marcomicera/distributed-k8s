@@ -70,8 +70,9 @@ if [ "$VERBOSE" = true ] ; then
 fi
 
 # Python 2.7 is required by PerfKitBenchmarker
-echo Running \'sudo apt install python python-pip -y\'...
-sudo apt install python python-pip -y
+# TODO delete this and make it a requirement
+echo Running \'sudo apt-get install python python-pip -y\'...
+sudo apt-get install python python-pip -y
 
 # Installing PerfKitBenchmarker dependencies
 echo Installing PerfKitBenchmarker dependencies...
