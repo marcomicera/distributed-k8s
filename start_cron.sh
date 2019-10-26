@@ -65,6 +65,7 @@ kubectl run $KUBECTL_FLAGS \
   "cron-$(uuidgen | head -c8)" \
   --schedule="*/1 * * * *" \
   --restart=OnFailure \
+  --image-pull-policy='Always' \
   --image=$IMAGE \
   -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh"
 if [ "$DRY_RUN" = false ] ; then
