@@ -76,8 +76,11 @@ kubectl run $KUBECTL_FLAGS \
   --image-pull-policy Always \
   --image=$IMAGE \
   --kubeconfig=$KUBECONFIG \
-  --generator=run-pod/v1 \
   -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh" >& "$OUTPUT_FD"
+if [ "$GENERATE_DEPLOYMENT_FILE" = true ] ; then
+  # Hack: delete deployment file's first line (it contains a warning)
+  tail -n +2 "$DRY_RUN_OUTPUT" > "$DRY_RUN_OUTPUT.tmp" && mv "$DRY_RUN_OUTPUT.tmp" "$DRY_RUN_OUTPUT"
+fi
 if [ "$DRY_RUN" = false ] ; then
   echo ...CronJob launched.
 fi
