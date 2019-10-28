@@ -24,6 +24,7 @@ fi
 VERBOSE=false
 
 # Benchmarks config
+KUBECONFIG=kubeconfig
 THREADS=4
 PKB_IMAGE=marcomicera/dk8s-pkb:latest
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
@@ -31,7 +32,7 @@ RESULTS_DIR=./results/tmp/$CURRENT_DATE
 CSV_RESULTS=$RESULTS_DIR/results.csv
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
-KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
+KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$KUBECONFIG\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 if [ "$CRONJOB" = true ] ; then
   KUBERNETES_FLAGS+=\ --generator=run-pod/v1
 fi
