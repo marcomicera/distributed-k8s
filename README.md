@@ -99,21 +99,22 @@ When you're done:
 
 1.  `./start_cron.sh $BENCHMARKS`:
     ```bash
-    kubectl run --image=dk8s-cronjob \
-        -- /bin/sh -c "./start.sh $BENCHMARKS"
+    # Launches a CronJob using the `dk8s-cronjob` image
+    kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
     ```
     - `dk8s-cronjob` image:
         ```docker
+        # It simply downloads this repo
         RUN git clone git@github.com:marcomicera/distributed-k8s.git
         ```
 1. `./start.sh $BENCHMARKS`:
     ```bash
-    # PerfKitBenchmarker creates pods using the dk8s-pkb image
+    # PerfKitBenchmarker creates pods using the `dk8s-pkb` image
     ```
     - `dk8s-pkb` image:
         ```docker
-        # Dependencies
-        # Launching benchmarks
+        # Installs dependencies
+        # Launches benchmarks
         ```
 
 </details>
