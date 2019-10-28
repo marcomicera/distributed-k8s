@@ -28,9 +28,10 @@ CRONJOB=true
 export CRONJOB
 
 # `kubectl` flags
+KUBECONFIG=kubeconfig
 IMAGE=marcomicera/dk8s-cronjob:latest
 DRY_RUN=false
-KUBECTL_FLAGS=-o=yaml
+KUBECTL_FLAGS=-o=yaml\ --generator=run-pod/v1\ "cron-$(uuidgen | head -c8)" \ --schedule="*/1 * * * *" \ --restart=OnFailure \ --image-pull-policy Always \ --image=$IMAGE\ --generator=run-pod/v1\ --kubeconfig=$KUBECONFIG
 if [ "$DRY_RUN" = true ] ; then
   KUBECTL_FLAGS+=\ --dry-run
 fi
@@ -62,11 +63,6 @@ fi
 printf '\t%s\n' "${AVAILABLE_BENCHMARKS[@]}"
 printf '}\n'
 kubectl run $KUBECTL_FLAGS \
-  "cron-$(uuidgen | head -c8)" \
-  --schedule="*/1 * * * *" \
-  --restart=OnFailure \
-  --image-pull-policy Always \
-  --image=$IMAGE \
   -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh"
 if [ "$DRY_RUN" = false ] ; then
   echo ...CronJob launched.

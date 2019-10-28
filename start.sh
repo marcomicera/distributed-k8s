@@ -33,9 +33,6 @@ CSV_RESULTS=$RESULTS_DIR/results.csv
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$KUBECONFIG\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
-if [ "$CRONJOB" = true ] ; then
-  KUBERNETES_FLAGS+=\ --generator=run-pod/v1
-fi
 
 # Check whether to run all benchmarks or not
 BENCHMARKS_TO_RUN=()
