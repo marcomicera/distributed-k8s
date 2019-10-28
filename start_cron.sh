@@ -31,6 +31,8 @@ export CRONJOB
 KUBECONFIG=kubeconfig
 IMAGE=marcomicera/dk8s-cronjob:latest
 DRY_RUN=false
+GENERATE_DEPLOYMENT_FILE=true
+DRY_RUN_OUTPUT=cronjob.yaml
 KUBECTL_FLAGS=-o=yaml
 if [ "$DRY_RUN" = true ] ; then
   KUBECTL_FLAGS+=\ --dry-run
@@ -55,13 +57,18 @@ if [ "$VERBOSE" = true ] ; then
 fi
 
 # Starting the CronJob
+OUTPUT_FD=1
 if [ "$DRY_RUN" = true ] ; then
   printf 'Dry-running the following benchmakrs as a CronJob: {\n'
 else
   printf 'Launching the following benchmarks as a CronJob: {\n'
 fi
-printf '\t%s\n' "${AVAILABLE_BENCHMARKS[@]}"
+printf '\t%s\n' "${BENCHMARKS_TO_RUN[@]}"
 printf '}\n'
+if [ "$GENERATE_DEPLOYMENT_FILE" = true ] ; then
+  printf "Deployment file: %s\n" $DRY_RUN_OUTPUT
+  OUTPUT_FD=$DRY_RUN_OUTPUT
+fi
 kubectl run $KUBECTL_FLAGS \
   "cron-$(uuidgen | head -c8)" \
   --schedule="*/1 * * * *" \
@@ -69,7 +76,8 @@ kubectl run $KUBECTL_FLAGS \
   --image-pull-policy Always \
   --image=$IMAGE \
   --kubeconfig=$KUBECONFIG \
-  -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh"
+  --generator=run-pod/v1 \
+  -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh" >& "$OUTPUT_FD"
 if [ "$DRY_RUN" = false ] ; then
   echo ...CronJob launched.
 fi
