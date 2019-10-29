@@ -1,3 +1,7 @@
+# Sensitive
+docker
+kubeconfig
+
 # Misc
 ubuntu_ssh.*
 .idea
