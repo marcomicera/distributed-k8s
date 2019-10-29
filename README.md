@@ -49,13 +49,43 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 
 # How to run it
 
-Benchmarks can be periodically launched as a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) or one-time only.
+Benchmarks can be periodically launched as a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) or one-time only.\
 This behavior is defined by [`start_cron.sh`](start_cron.sh) and [`start.sh`](start.sh) respectively.
 [`start_cron.sh`](start_cron.sh) simply creates a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) that executes [`start.sh`](start.sh).
 
 <details>
+<summary>Architecture</summary>
+<br>
+
+As mentioned earlier, there are two entry points:
+
+1.  `./start_cron.sh $BENCHMARKS` (periodic benchmarks):
+    ```bash
+    # Launches a CronJob using the `dk8s-cronjob` image
+    kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
+    ```
+    - `dk8s-cronjob` image:
+        ```docker
+        # It simply downloads this repo
+        RUN git clone git@github.com:marcomicera/distributed-k8s.git
+        ```
+1. `./start.sh $BENCHMARKS` (one-time only):
+    ```bash
+    # PerfKitBenchmarker creates pods using the `dk8s-pkb` image
+    ```
+    - `dk8s-pkb` image:
+        ```docker
+        # Installs dependencies
+        # Launches benchmarks
+        ```
+
+</details>
+
+<details>
 <summary>Cluster configuration</summary>
 <br>
+
+There needs to be a `kubeconfig` file at the root folder of this repository in order for everything to work.\
 
 1. Create a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
     ```bash
@@ -134,32 +164,6 @@ When you're done:
     ```
 </details>
 
-<details>
-<summary>Overview</summary>
-<br>
-
-1.  `./start_cron.sh $BENCHMARKS`:
-    ```bash
-    # Launches a CronJob using the `dk8s-cronjob` image
-    kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
-    ```
-    - `dk8s-cronjob` image:
-        ```docker
-        # It simply downloads this repo
-        RUN git clone git@github.com:marcomicera/distributed-k8s.git
-        ```
-1. `./start.sh $BENCHMARKS`:
-    ```bash
-    # PerfKitBenchmarker creates pods using the `dk8s-pkb` image
-    ```
-    - `dk8s-pkb` image:
-        ```docker
-        # Installs dependencies
-        # Launches benchmarks
-        ```
-
-</details>
-
 ### Steps
 
 1. Clone this repository:
@@ -168,7 +172,6 @@ When you're done:
    $ cd distributed-k8s || exit
    ```
 1. Set benchmark-specific flags in the [`benchmarks_conf.yaml` configuration file](benchmarks_conf.yaml)
-1. Set other general config paramers in the [`start.sh` shell script](start.sh)
 1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once specifying the [benchmarks](https://github.com/marcomicera/distributed-k8s#perfkitbenchmarker-supported-benchmarks-runnable-in-kubernetes) to be run:
     ```bash
     $ ./start.sh <benchmark_list>
@@ -177,6 +180,7 @@ When you're done:
     ```bash
     $ ./start_cron.sh <benchmark_list>
     ```
+    Note that this second version uses a Docker image to run benchmarks, hence the previously-modified benchmark-specific flags will not be considered (the Docker image clones this repo and uses its last commit).
 
 # References
 - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))
