@@ -69,6 +69,22 @@ if [ "$GENERATE_DEPLOYMENT_FILE" = true ] ; then
   printf "Deployment file: %s\n" $DRY_RUN_OUTPUT
   OUTPUT_FD=$DRY_RUN_OUTPUT
 fi
+OVERRIDES=$(cat <<EOF
+{
+  "spec": {
+    "jobTemplate": {
+      "spec": {
+        "template": {
+          "spec": {
+            "dnsPolicy": "Default"
+          }
+        }
+      }
+    }
+  }
+}
+EOF
+)
 kubectl run $KUBECTL_FLAGS \
   "cron-$(uuidgen | head -c8)" \
   --schedule="*/1 * * * *" \
@@ -76,7 +92,7 @@ kubectl run $KUBECTL_FLAGS \
   --image-pull-policy Always \
   --image=$IMAGE \
   --kubeconfig=$KUBECONFIG \
-  --overrides='{ "spec": { "jobTemplate": { "spec": { "template": { "spec": { "dnsPolicy": "Default" } } } } } }' \
+  --overrides="$OVERRIDES" \
   -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh" >& "$OUTPUT_FD"
 if [ "$GENERATE_DEPLOYMENT_FILE" = true ] ; then
   # Hack: delete deployment file's first line (it contains a warning)
