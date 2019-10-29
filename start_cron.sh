@@ -69,6 +69,7 @@ if [ "$GENERATE_DEPLOYMENT_FILE" = true ] ; then
   printf "Deployment file: %s\n" $DRY_RUN_OUTPUT
   OUTPUT_FD=$DRY_RUN_OUTPUT
 fi
+CONTAINER_NAME="cron-$(uuidgen | head -c8)"
 OVERRIDES=$(cat <<EOF
 {
   "spec": {
@@ -76,6 +77,28 @@ OVERRIDES=$(cat <<EOF
       "spec": {
         "template": {
           "spec": {
+            "containers": [{
+              "name": "$CONTAINER_NAME",
+              "image": "$IMAGE",
+              "volumeMounts": [{
+                "name": "dk8s-kubeconfig",
+                "mountPath": "/home/root/distributed-k8s/kubeconfig",
+                "readOnly": true,
+                "subPath": "kubeconfig"
+              }],
+              "args": [
+                "/bin/sh",
+                "-c",
+                "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh"
+              ]
+            }],
+            "volumes": [{
+              "name": "dk8s-kubeconfig",
+              "secret": {
+                "secretName": "dk8s-kubeconfig"
+              }
+            }],
+            "serviceAccountName": "dk8s-sa",
             "dnsPolicy": "Default"
           }
         }
@@ -86,14 +109,13 @@ OVERRIDES=$(cat <<EOF
 EOF
 )
 kubectl run $KUBECTL_FLAGS \
-  "cron-$(uuidgen | head -c8)" \
+  $CONTAINER_NAME \
   --schedule="*/1 * * * *" \
   --restart=OnFailure \
   --image-pull-policy Always \
   --image=$IMAGE \
   --kubeconfig=$KUBECONFIG \
-  --overrides="$OVERRIDES" \
-  -- /bin/sh -c "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh" >& "$OUTPUT_FD"
+  --overrides="$OVERRIDES" >& "$OUTPUT_FD"
 if [ "$GENERATE_DEPLOYMENT_FILE" = true ] ; then
   # Hack: delete deployment file's first line (it contains a warning)
   tail -n +2 "$DRY_RUN_OUTPUT" > "$DRY_RUN_OUTPUT.tmp" && mv "$DRY_RUN_OUTPUT.tmp" "$DRY_RUN_OUTPUT"

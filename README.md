@@ -54,6 +54,47 @@ This behavior is defined by [`start_cron.sh`](start_cron.sh) and [`start.sh`](st
 [`start_cron.sh`](start_cron.sh) simply creates a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) that executes [`start.sh`](start.sh).
 
 <details>
+<summary>Cluster configuration</summary>
+<br>
+
+1. Create a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
+    ```bash
+    $ kubectl apply --kubeconfig=kubeconfig -f - <<EOF
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: dk8s-sa
+    EOF
+    ```
+1. Create a [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding):
+    ```bash
+    $ kubectl apply --kubeconfig=kubeconfig -f - <<EOF
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: dk8s-sa-binding
+      namespace: mmicera-ns1
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: ns-contributor
+    subjects:
+    - kind: ServiceAccount
+      name: dk8s-sa
+      namespace: authn
+    - apiGroup: rbac.authorization.k8s.io
+      kind: Group
+      name: mmicera-contributors
+    EOF
+    ```
+1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) containing the `kubeconfig` file:
+    ```bash
+    $ kubectl create secret --kubeconfig=kubeconfig generic dk8s-kubeconfig --from-file=kubeconfig
+    ```
+
+</details>
+
+<details>
 <summary>Preliminary steps to run benchmarks locally</summary>
 <br>
 
