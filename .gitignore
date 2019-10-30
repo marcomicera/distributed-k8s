@@ -3,7 +3,7 @@ docker
 kubeconfig
 
 # Misc
-cronjob.ymal
+cronjob.yaml
 ubuntu_ssh.*
 .idea
 venv
