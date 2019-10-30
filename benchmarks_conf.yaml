@@ -30,7 +30,7 @@ cluster_boot:
   description: Create a cluster, record all times to boot.
   vm_groups:
     default:
-      vm_count: 6
+      vm_count: 1
 
 fio: # cannot set vm_count
   description: >
