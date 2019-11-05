@@ -5,4 +5,5 @@ rsync -azP . distributed-k8s:/home/kubernetes/distributed-k8s/ \
   --exclude=results \
   --exclude=docker \
   --exclude=.idea \
-  --exclude=venv
+  --exclude=venv \
+  --exclude=pkb/.tox
