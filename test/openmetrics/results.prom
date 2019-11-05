@@ -1,0 +1,24 @@
+# HELP Cluster_Boot_Time Cluster_Boot_Time values
+# TYPE Cluster_Boot_Time summary
+Cluster_Boot_Time_count{test="cluster_boot",unit="seconds"} 1.0
+Cluster_Boot_Time_sum{test="cluster_boot",unit="seconds"} 15.68509292602539
+# TYPE Cluster_Boot_Time_created gauge
+Cluster_Boot_Time_created{test="cluster_boot",unit="seconds"} 1.5729530447091908e+09
+# HELP Boot_Time Boot_Time values
+# TYPE Boot_Time summary
+Boot_Time_count{test="cluster_boot",unit="seconds"} 1.0
+Boot_Time_sum{test="cluster_boot",unit="seconds"} 15.68509292602539
+# TYPE Boot_Time_created gauge
+Boot_Time_created{test="cluster_boot",unit="seconds"} 1.5729530447082098e+09
+# HELP End_to_End_Runtime End_to_End_Runtime values
+# TYPE End_to_End_Runtime summary
+End_to_End_Runtime_count{test="cluster_boot",unit="seconds"} 1.0
+End_to_End_Runtime_sum{test="cluster_boot",unit="seconds"} 382.53259897232056
+# TYPE End_to_End_Runtime_created gauge
+End_to_End_Runtime_created{test="cluster_boot",unit="seconds"} 1.5729530447211018e+09
+# HELP lscpu lscpu values
+# TYPE lscpu summary
+lscpu_count{test="cluster_boot",unit=""} 1.0
+lscpu_sum{test="cluster_boot",unit=""} 0.0
+# TYPE lscpu_created gauge
+lscpu_created{test="cluster_boot",unit=""} 1.5729530447198784e+09
