@@ -8,7 +8,7 @@ block_storage_workload:
     write modes to simulate various scenarios.
   vm_groups:
     default:
-      vm_count: 11
+      vm_count: 1
 
 cassandra_ycsb:
   description: Run YCSB against Cassandra.
