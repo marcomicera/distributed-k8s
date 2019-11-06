@@ -14,17 +14,17 @@ cassandra_ycsb:
   description: Run YCSB against Cassandra.
   vm_groups:
     workers:
-      vm_count: 2
+      vm_count: 1
     clients:
-      vm_count: 5
+      vm_count: 1
 
 cassandra_stress:
   description: Benchmark Cassandra using cassandra-stress
   vm_groups:
     workers:
-      vm_count: 2
+      vm_count: 1
     client:
-      vm_count: 5
+      vm_count: 1
 
 cluster_boot:
   description: Create a cluster, record all times to boot.
@@ -56,9 +56,9 @@ mongodb_ycsb:
   description: Run YCSB against a single MongoDB node.
   vm_groups:
     workers:
-      vm_count: 3
+      vm_count: 1
     clients:
-      vm_count: 4
+      vm_count: 1
 
 netperf: # cannot set vm_count
   description: Run TCP_RR, TCP_CRR, UDP_RR and TCP_STREAM
