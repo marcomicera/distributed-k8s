@@ -59,25 +59,30 @@ This behavior is defined by [`start_cron.sh`](start_cron.sh) and [`start.sh`](st
 
 As mentioned earlier, there are two entry points:
 
-1.  `./start_cron.sh $BENCHMARKS` (periodic benchmarks):
-    ```bash
-    # Launches a CronJob using the `dk8s-cronjob` image
-    kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
-    ```
-    - `dk8s-cronjob` image:
-        ```docker
-        # It simply downloads this repo
-        RUN git clone git@github.com:marcomicera/distributed-k8s.git
-        ```
-1. `./start.sh $BENCHMARKS` (one-time only):
-    ```bash
-    # PerfKitBenchmarker creates pods using the `dk8s-pkb` image
-    ```
-    - `dk8s-pkb` image:
-        ```docker
-        # Installs dependencies
-        # Launches benchmarks
-        ```
+1. `./start.sh $BENCHMARKS` launches [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once:
+    - What [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) does:
+        1. It creates pods using the `dk8s-pkb` image
+        1. It executes benchmarks into these pods
+        1. It retrieves results from all pods
+        1. It exports results using different publishers (e.g., on `stdout`, CSV file, etc.)
+    - It is executed:
+        - Locally, if launched by the [`./start.sh`](start.sh) script
+        - Using the `dk8s-cronjob` image, if launched periodically (see next point)
+    - What does the `dk8s-pkb` image do:
+        1. Installs dependencies
+        1. Launches benchmarks
+
+1.  `./start_cron.sh $BENCHMARKS` launches benchmarks periodically
+    - How it works
+        1. It runs [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) in a CronJob, using the `dk8s-cronjob` image
+            ```bash
+            kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
+            ```
+    - What does the `dk8s-cronjob` image do:
+        1. It simply downloads this repo
+            ```docker
+            RUN git clone git@github.com:marcomicera/distributed-k8s.git
+            ```
 
 </details>
 
