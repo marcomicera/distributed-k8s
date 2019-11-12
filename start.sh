@@ -31,7 +31,7 @@ CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 RESULTS_DIR=./results/tmp/$CURRENT_DATE
 CSV_RESULTS=$RESULTS_DIR/results.csv
 OM_RESULTS=$RESULTS_DIR/results.prom
-PUSHGATEWAY=prometheus-pushgateway.monitoring.svc.cluster.local:9091
+PUSHGATEWAY=$PUSHGATEWAY
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a\ --om_path\ $OM_RESULTS\ --om_write_mode\ w\ --pushgateway\ $PUSHGATEWAY
 BENCHMARKS_CONFIG_FILE=benchmarks_conf.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$KUBECONFIG\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE

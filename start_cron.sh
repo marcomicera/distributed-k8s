@@ -86,6 +86,10 @@ OVERRIDES=$(cat <<EOF
                 "readOnly": true,
                 "subPath": "kubeconfig"
               }],
+              "env": [{
+                "name": "PUSHGATEWAY",
+                "value": "$PUSHGATEWAY"
+              }],
               "args": [
                 "/bin/sh",
                 "-c",

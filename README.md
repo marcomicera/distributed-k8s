@@ -177,6 +177,10 @@ When you're done:
    $ cd distributed-k8s || exit
    ```
 1. Set benchmark-specific flags in the [`benchmarks_conf.yaml` configuration file](benchmarks_conf.yaml)
+1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address as an environment variable:
+    ```bash
+    $ export PUSHGATEWAY=<pushgateway_address>
+    ```
 1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once specifying the [benchmarks](https://github.com/marcomicera/distributed-k8s#perfkitbenchmarker-supported-benchmarks-runnable-in-kubernetes) to be run:
     ```bash
     $ ./start.sh <benchmark_list>
