@@ -102,8 +102,7 @@ OVERRIDES=$(cat <<EOF
                 "secretName": "dk8s-kubeconfig"
               }
             }],
-            "serviceAccountName": "dk8s-sa",
-            "dnsPolicy": "Default"
+            "serviceAccountName": "dk8s-sa"
           }
         }
       }
