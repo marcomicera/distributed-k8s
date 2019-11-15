@@ -78,6 +78,10 @@ As mentioned earlier, there are two entry points:
             ```bash
             kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
             ```
+    -  This scripts needs to know the `kubeconfig` file path:
+        ```bash
+        $ export KUBECONFIG=<kubeconfig_path>  
+        ```
     - What does the `dk8s-cronjob` image do:
         1. It simply downloads this repo
             ```docker
@@ -175,10 +179,6 @@ When you're done:
    $ cd distributed-k8s || exit
    ```
 1. Set benchmark-specific flags in the [`benchmarks-conf.yaml` configuration file](benchmarks-conf.yaml)
-1. Set the `kubeconfig` file directory as an environment variable:
-    ```bash
-    $ export KUBECONFIG=<kubeconfig_path>  
-    ```
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
     ```yaml
     schedule: '*/1 * * * *'
