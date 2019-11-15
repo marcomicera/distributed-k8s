@@ -49,15 +49,16 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 
 # How to run it
 
-Benchmarks can be periodically launched as a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) or one-time only.\
-This behavior is defined by [`start_cron.sh`](start_cron.sh) and [`start.sh`](start.sh) respectively.
-[`start_cron.sh`](start_cron.sh) simply creates a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) that executes [`start.sh`](start.sh).
+Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).
 
 <details>
 <summary>Architecture</summary>
 <br>
 
-As mentioned earlier, there are two entry points:
+Periodic benchmarks are launched by means of the [`cronjob.yaml`](cronjob.yaml) file: it runs the [`start.sh`](start.sh) script inside pods to run [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
+The [`cronjob.yaml`](cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
+
+Here is a description of these two script files:
 
 1. `./start.sh $BENCHMARKS` launches [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once:
     - What [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) does:
