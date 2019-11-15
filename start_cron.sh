@@ -23,12 +23,7 @@ if (( $# < 1 )); then
 fi
 VERBOSE=false
 
-# Letting the main script know that a CronJob must be started
-CRONJOB=true
-export CRONJOB
-
 # `kubectl` flags
-KUBECONFIG=kubeconfig
 IMAGE=marcomicera/dk8s-cronjob:latest
 DRY_RUN=false
 GENERATE_DEPLOYMENT_FILE=true
@@ -85,10 +80,6 @@ OVERRIDES=$(cat <<EOF
                 "mountPath": "/home/root/distributed-k8s/kubeconfig",
                 "readOnly": true,
                 "subPath": "kubeconfig"
-              }],
-              "env": [{
-                "name": "PUSHGATEWAY",
-                "value": "$PUSHGATEWAY"
               }],
               "args": [
                 "/bin/sh",

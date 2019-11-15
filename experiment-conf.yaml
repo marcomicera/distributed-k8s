@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  benchmarks: cluster_boot fio
+  pushgateway: pushgateway.address.test
+kind: ConfigMap
+metadata:
+  name: experiment-conf
+  namespace: mmicera-ns1

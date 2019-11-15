@@ -90,11 +90,9 @@ As mentioned earlier, there are two entry points:
 <summary>Cluster configuration</summary>
 <br>
 
-There needs to be a `kubeconfig` file at the root folder of this repository in order for everything to work.\
-
 1. Create a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
     ```bash
-    $ kubectl apply --kubeconfig=kubeconfig -f - <<EOF
+    $ kubectl apply -f - <<EOF
     apiVersion: v1
     kind: ServiceAccount
     metadata:
@@ -103,7 +101,7 @@ There needs to be a `kubeconfig` file at the root folder of this repository in o
     ```
 1. Create a [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding):
     ```bash
-    $ kubectl apply --kubeconfig=kubeconfig -f - <<EOF
+    $ kubectl apply -f - <<EOF
     apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
@@ -122,9 +120,9 @@ There needs to be a `kubeconfig` file at the root folder of this repository in o
       name: mmicera-contributors
     EOF
     ```
-1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) containing the `kubeconfig` file:
+1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) from a `kubeconfig` file:
     ```bash
-    $ kubectl create secret --kubeconfig=kubeconfig generic dk8s-kubeconfig --from-file=kubeconfig
+    $ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
     ```
 
 </details>
@@ -176,20 +174,23 @@ When you're done:
    $ git clone git@github.com:marcomicera/distributed-k8s.git
    $ cd distributed-k8s || exit
    ```
-1. Set benchmark-specific flags in the [`benchmarks_conf.yaml` configuration file](benchmarks_conf.yaml)
-1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address as an environment variable:
+1. Set benchmark-specific flags in the [`benchmarks-conf.yaml` configuration file](benchmarks-conf.yaml)
+1. Set the `kubeconfig` file directory as an environment variable:
     ```bash
-    $ export PUSHGATEWAY=<pushgateway_address>
+    $ export KUBECONFIG=<kubeconfig_path>  
     ```
-1. Launch [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once specifying the [benchmarks](https://github.com/marcomicera/distributed-k8s#perfkitbenchmarker-supported-benchmarks-runnable-in-kubernetes) to be run:
+1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
+    ```yaml
+    schedule: '*/1 * * * *'
+    ```
+1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`experiment-conf.yaml`](experiment-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
-    $ ./start.sh <benchmark_list>
+    $ kubectl apply -f experiment-conf.yaml
     ```
-    Or periodically with:
+1. Launch benchmarks periodically:
     ```bash
-    $ ./start_cron.sh <benchmark_list>
+    $ kubectl apply -f cronjob.yaml
     ```
-    Note that this second version uses a Docker image to run benchmarks, hence the previously-modified benchmark-specific flags will not be considered (the Docker image clones this repo and uses its last commit).
 
 # References
 - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))

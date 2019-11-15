@@ -4,7 +4,6 @@ kubeconfig
 
 # Misc
 .vscode
-cronjob.yaml
 ubuntu_ssh.*
 .idea
 venv

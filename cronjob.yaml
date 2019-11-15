@@ -1,0 +1,51 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dk8s-cronjob
+  name: dk8s-cronjob
+spec:
+  concurrencyPolicy: Allow
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            run: dk8s-cronjob
+        spec:
+          containers:
+          - args:
+            - /bin/sh
+            - -c
+            - ./start.sh $BENCHMARKS_TO_RUN; /bin/sh
+            env:
+            - name: PUSHGATEWAY
+              valueFrom:
+                configMapKeyRef:
+                  name: experiment-conf
+                  key: pushgateway
+            - name: BENCHMARKS_TO_RUN
+              valueFrom:
+                configMapKeyRef:
+                  name: experiment-conf
+                  key: benchmarks
+            image: marcomicera/dk8s-cronjob:latest
+            name: dk8s-cronjob
+            resources: {}
+            volumeMounts:
+            - mountPath: /home/root/distributed-k8s/kubeconfig
+              name: dk8s-kubeconfig
+              readOnly: true
+              subPath: kubeconfig
+          restartPolicy: OnFailure
+          serviceAccountName: dk8s-sa
+          volumes:
+          - name: dk8s-kubeconfig
+            secret:
+              secretName: dk8s-kubeconfig
+  schedule: '*/1 * * * *'
+status: {}
