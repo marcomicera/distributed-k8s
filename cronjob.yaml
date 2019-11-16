@@ -67,11 +67,18 @@ spec:
               name: dk8s-kubeconfig
               readOnly: true
               subPath: kubeconfig
+            - mountPath: /home/root/distributed-k8s/benchmarks-conf.yaml
+              name: dk8s-benchconfig
+              readOnly: true
+              subPath: benchmarks-conf.yaml
           restartPolicy: OnFailure
           serviceAccountName: dk8s-sa
           volumes:
           - name: dk8s-kubeconfig
             secret:
               secretName: dk8s-kubeconfig
+          - name: dk8s-benchconfig
+            secret:
+              secretName: dk8s-benchconfig
   schedule: '*/1 * * * *'
 status: {}

@@ -75,24 +75,40 @@ OVERRIDES=$(cat <<EOF
             "containers": [{
               "name": "$CONTAINER_NAME",
               "image": "$IMAGE",
-              "volumeMounts": [{
-                "name": "dk8s-kubeconfig",
-                "mountPath": "/home/root/distributed-k8s/kubeconfig",
-                "readOnly": true,
-                "subPath": "kubeconfig"
-              }],
+              "volumeMounts": [
+                {
+                  "name": "dk8s-kubeconfig",
+                  "mountPath": "/home/root/distributed-k8s/kubeconfig",
+                  "readOnly": true,
+                  "subPath": "kubeconfig"
+                },
+                {
+                  "name": "dk8s-benchconfig",
+                  "mountPath": "/home/root/distributed-k8s/benchmarks-conf.yaml",
+                  "readOnly": true,
+                  "subPath": "benchmarks-conf.yaml"
+                }
+              ],
               "args": [
                 "/bin/sh",
                 "-c",
                 "./start.sh ${BENCHMARKS_TO_RUN[@]}; /bin/sh"
               ]
             }],
-            "volumes": [{
-              "name": "dk8s-kubeconfig",
-              "secret": {
-                "secretName": "dk8s-kubeconfig"
+            "volumes": [
+              {
+                "name": "dk8s-kubeconfig",
+                "secret": {
+                  "secretName": "dk8s-kubeconfig"
+                }
+              },
+              {
+                "name": "dk8s-benchconfig",
+                "secret": {
+                  "secretName": "dk8s-benchconfig"
+                }
               }
-            }],
+            ],
             "serviceAccountName": "dk8s-sa"
           }
         }

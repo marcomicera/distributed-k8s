@@ -138,7 +138,7 @@ When you're done:
    $ git clone git@github.com:marcomicera/distributed-k8s.git
    $ cd distributed-k8s || exit
    ```
-1. Set benchmark-specific flags in the [`benchmarks-conf.yaml` configuration file](benchmarks-conf.yaml)
+1. Set benchmark-specific flags in the [`benchmarks-conf.yaml`](benchmarks-conf.yaml) configuration file
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
     ```yaml
     schedule: '*/1 * * * *'
@@ -147,8 +147,9 @@ When you're done:
     ```bash
     $ kubectl apply -f experiment-conf.yaml
     ```
-1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) from a `kubeconfig` file:
+1. Create [Secret](https://kubernetes.io/docs/concepts/configuration/secret)s from the [`benchmarks-conf.yaml`](benchmarks-conf.yaml) file and a `kubeconfig` file:
     ```bash
+    $ kubectl create secret generic dk8s-benchconfig --from-file=benchmarks-conf.yaml
     $ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
     ```
 1. Launch benchmarks periodically:
