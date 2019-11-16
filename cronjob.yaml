@@ -1,3 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dk8s-sa
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dk8s-sa-binding
+  namespace: mmicera-ns1
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ns-contributor
+subjects:
+- kind: ServiceAccount
+  name: dk8s-sa
+  namespace: authn
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: mmicera-contributors
+
+---
+
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -34,7 +60,7 @@ spec:
                   name: experiment-conf
                   key: benchmarks
             image: marcomicera/dk8s-cronjob:latest
-            name: dk8s-cronjob
+            name: dk8s-cronjobe
             resources: {}
             volumeMounts:
             - mountPath: /home/root/distributed-k8s/kubeconfig

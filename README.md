@@ -92,47 +92,6 @@ Here is a description of these two script files:
 </details>
 
 <details>
-<summary>Cluster configuration</summary>
-<br>
-
-1. Create a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
-    ```bash
-    $ kubectl apply -f - <<EOF
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: dk8s-sa
-    EOF
-    ```
-1. Create a [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding):
-    ```bash
-    $ kubectl apply -f - <<EOF
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: RoleBinding
-    metadata:
-      name: dk8s-sa-binding
-      namespace: mmicera-ns1
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: ns-contributor
-    subjects:
-    - kind: ServiceAccount
-      name: dk8s-sa
-      namespace: authn
-    - apiGroup: rbac.authorization.k8s.io
-      kind: Group
-      name: mmicera-contributors
-    EOF
-    ```
-1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) from a `kubeconfig` file:
-    ```bash
-    $ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
-    ```
-
-</details>
-
-<details>
 <summary>Preliminary steps to run benchmarks locally</summary>
 <br>
 
@@ -187,6 +146,10 @@ When you're done:
 1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`experiment-conf.yaml`](experiment-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
     $ kubectl apply -f experiment-conf.yaml
+    ```
+1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) from a `kubeconfig` file:
+    ```bash
+    $ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
     ```
 1. Launch benchmarks periodically:
     ```bash
