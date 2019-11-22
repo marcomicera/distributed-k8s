@@ -17,4 +17,5 @@ rsync -azvP . $HOST:$REMOTE_FOLDER/ \
   --exclude=docker \
   --exclude=.idea \
   --exclude=venv \
-  --filter=':- pkb/.gitignore'
+  --exclude=pkb/PerfkitBenchmarker.srctrl* \
+  --exclude=pkb/.tox
