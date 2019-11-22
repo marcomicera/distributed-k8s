@@ -3,6 +3,7 @@ docker
 kubeconfig
 
 # Misc
+test
 .vscode
 ubuntu_ssh.*
 .idea
