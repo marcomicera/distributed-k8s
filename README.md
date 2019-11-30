@@ -1,6 +1,6 @@
 # `distributed-k8s`
 
-### [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable in Kubernetes
+### [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable on Kubernetes
 Set difference between the [Kubernetes-compatible benchmark list](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/benchmark_sets.py#L177) and its [updated unsupported set](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker/blob/master/perfkitbenchmarker/providers/kubernetes/provider_info.py#L29).
 - `block_storage_workload`
 - `cassandra_ycsb`
@@ -136,7 +136,7 @@ When you're done:
 1. Clone this repository:
     ```bash
    $ git clone git@github.com:marcomicera/distributed-k8s.git
-   $ cd distributed-k8s || exit
+   $ cd distributed-k8s
    ```
 1. Set benchmark-specific flags in the [`benchmarks-conf.yaml`](benchmarks-conf.yaml) configuration file
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
