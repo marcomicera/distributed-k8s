@@ -80,5 +80,5 @@ spec:
           - name: dk8s-benchconfig
             secret:
               secretName: dk8s-benchconfig
-  schedule: '*/1 * * * *'
+  schedule: '*/59 * * * *'
 status: {}
