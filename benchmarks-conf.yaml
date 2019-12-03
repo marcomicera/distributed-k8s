@@ -60,7 +60,7 @@ mongodb_ycsb:
     clients:
       vm_count: 1
 
-netperf: # cannot set vm_count
+netperf: # vm_count is 2 and it cannot be changed
   description: Run TCP_RR, TCP_CRR, UDP_RR and TCP_STREAM
 
 redis:
