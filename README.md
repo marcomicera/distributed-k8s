@@ -34,7 +34,7 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 </details>
 
 <details>
-<summary>Other potentially insteresting benchmarks not included in PerfKitBenchmarker</summary>
+<summary>Other potentially interesting benchmarks not included in PerfKitBenchmarker</summary>
 <br>
 
 |                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
