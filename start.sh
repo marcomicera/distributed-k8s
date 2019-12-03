@@ -82,7 +82,7 @@ PKB_FOLDER=pkb
 cd $PKB_FOLDER || exit
 sudo pip install -r requirements.txt
 cd ..
-echo ... done with PerfKitBenchmarker dependencies.
+echo ...done with PerfKitBenchmarker dependencies.
 
 # Running all benchmarks
 for BENCHMARK_TO_RUN in ${BENCHMARKS_TO_RUN[@]}; do

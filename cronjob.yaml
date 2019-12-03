@@ -60,7 +60,7 @@ spec:
                   name: experiment-conf
                   key: benchmarks
             image: marcomicera/dk8s-cronjob:latest
-            name: dk8s-cronjobe
+            name: dk8s-cronjob
             resources: {}
             volumeMounts:
             - mountPath: /home/root/distributed-k8s/kubeconfig
