@@ -79,10 +79,6 @@ Here is a description of these two script files:
             ```bash
             kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
             ```
-    -  This scripts needs to know the `kubeconfig` file path:
-        ```bash
-        $ export KUBECONFIG=<kubeconfig_path>  
-        ```
     - What does the `dk8s-cronjob` image do:
         1. It simply downloads this repo
             ```docker
@@ -146,9 +142,9 @@ When you're done:
     ```bash
     $ kubectl apply -f experiment-conf.yaml
     ```
-1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) from the `kubeconfig` file:
-    ```bash
-    $ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
+1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
+    ```yaml
+    schedule: '*/1 * * * *'
     ```
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
     ```yaml
