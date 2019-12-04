@@ -24,7 +24,7 @@ fi
 VERBOSE=false
 
 # Benchmarks config
-KUBECONFIG=dk8s-kubeconfig
+KUBECONFIG=.config/dk8s-kubeconfig
 THREADS=4
 PKB_IMAGE=marcomicera/dk8s-pkb:latest
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')

@@ -39,13 +39,13 @@ spec:
           initContainers:
             - name: dk8s-kubeconfig-generator
               image: marcomicera/dk8s-cronjob:latest
-              command:
-                - scripts/kubernetes/auth/kubernetes_add_service_account_kubeconfig.sh
-                - "dk8s-sa"
-                - "dk8s-kubeconfig"
+              args:
+                - /bin/sh
+                - -c
+                - scripts/kubernetes/auth/kubernetes_add_service_account_kubeconfig.sh dk8s-sa .config/dk8s-kubeconfig; /bin/sh
               volumeMounts:
                 - name: dk8s-kubeconfig
-                  mountPath: /home/root/distributed-k8s/dk8s-kubeconfig
+                  mountPath: /home/root/distributed-k8s/.config
           containers:
           - args:
             - /bin/sh
@@ -66,17 +66,16 @@ spec:
             name: dk8s-cronjob
             resources: {}
             volumeMounts:
-            - mountPath: /home/root/distributed-k8s/dk8s-kubeconfig
+            - mountPath: /home/root/distributed-k8s/.config
               name: dk8s-kubeconfig
-              readOnly: true
-              subPath: dk8s-kubeconfig
             - mountPath: /home/root/distributed-k8s/benchmarks-conf.yaml
               name: dk8s-benchconfig
               readOnly: true
               subPath: benchmarks-conf.yaml
           restartPolicy: Never
-          serviceAccountName: dk8s-sa
           volumes:
+          - name: dk8s-kubeconfig
+            emptyDir: {}
           - name: dk8s-benchconfig
             configMap:
               name: dk8s-benchconfig
