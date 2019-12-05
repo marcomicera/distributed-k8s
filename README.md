@@ -142,6 +142,10 @@ When you're done:
     ```bash
     $ kubectl apply -f experiment-conf.yaml
     ```
+1. Run the configuration script:
+    ```bash
+    $ ./configure.sh
+    ```
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
     ```yaml
     schedule: '0 * * * *'

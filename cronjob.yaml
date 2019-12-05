@@ -1,19 +1,28 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+ name: dk8s-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "create", "delete"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+
+---
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: dk8s-rbac
-  namespace: mmicera-ns1
+  name: dk8s-rb
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: ns-contributor
+  kind: Role
+  name: dk8s-role
 subjects:
 - kind: ServiceAccount
-  name: dk8s-sa
-  namespace: authn
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: mmicera-contributors
+  name: dk8s
 
 ---
 
@@ -36,16 +45,6 @@ spec:
           labels:
             run: dk8s-cronjob
         spec:
-          initContainers:
-            - name: dk8s-kubeconfig-generator
-              image: marcomicera/dk8s-cronjob:latest
-              args:
-                - /bin/sh
-                - -c
-                - scripts/kubernetes/auth/kubernetes_add_service_account_kubeconfig.sh dk8s-sa .config/dk8s-kubeconfig; /bin/sh
-              volumeMounts:
-                - name: dk8s-kubeconfig
-                  mountPath: /home/root/distributed-k8s/.config
           containers:
           - args:
             - /bin/sh
@@ -66,16 +65,20 @@ spec:
             name: dk8s-cronjob
             resources: {}
             volumeMounts:
-            - mountPath: /home/root/distributed-k8s/.config
+            - mountPath: /home/root/distributed-k8s/.config/dk8s-kubeconfig
               name: dk8s-kubeconfig
+              readOnly: true
+              subPath: dk8s-kubeconfig
             - mountPath: /home/root/distributed-k8s/benchmarks-conf.yaml
               name: dk8s-benchconfig
               readOnly: true
               subPath: benchmarks-conf.yaml
           restartPolicy: Never
+          serviceAccountName: dk8s
           volumes:
           - name: dk8s-kubeconfig
-            emptyDir: {}
+            secret:
+              secretName: dk8s-kubeconfig
           - name: dk8s-benchconfig
             configMap:
               name: dk8s-benchconfig
