@@ -144,10 +144,6 @@ When you're done:
     ```
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
     ```yaml
-    schedule: '*/1 * * * *'
-    ```
-1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
-    ```yaml
     schedule: '0 * * * *'
     ```
 1. Launch benchmarks periodically:
