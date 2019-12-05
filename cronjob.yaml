@@ -78,7 +78,7 @@ spec:
             secret:
               secretName: dk8s-kubeconfig
           - name: dk8s-benchconfig
-            secret:
-              secretName: dk8s-benchconfig
+            configMap:
+              name: dk8s-benchconfig
   schedule: '0 * * * *'
 status: {}
