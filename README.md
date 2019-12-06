@@ -45,8 +45,8 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
 <summary>Architecture</summary>
 <br>
 
-Periodic benchmarks are launched by means of the [`cronjob.yaml`](cronjob.yaml) file: it runs the [`start.sh`](start.sh) script inside pods to run [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
-The [`cronjob.yaml`](cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
+Periodic benchmarks are launched by means of the [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file: it runs the [`start.sh`](start.sh) script inside pods to run [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
+The [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
 
 Here is a description of these two script files:
 
@@ -138,13 +138,13 @@ When you're done:
     ```bash
     $ ./configure.sh
     ```
-1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
+1. Set the frequency with which benchmarks will be run in [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml)
     ```yaml
     schedule: '0 * * * *'
     ```
 1. Launch benchmarks periodically:
     ```bash
-    $ kubectl apply -f cronjob.yaml
+    $ kubectl apply -f dk8s-pkb-cronjob.yaml
     ```
 
 # Documentation
