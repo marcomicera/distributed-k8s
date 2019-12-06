@@ -33,23 +33,13 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 
 </details>
 
-<details>
-<summary>Other potentially interesting benchmarks not included in PerfKitBenchmarker</summary>
-<br>
 
-|                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
-|------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
-|                              | <sub><sup>Requires the cooperation of multiple nodes</sup></sub> | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
-| [PostgreSQL pg_bench](https://github.com/jberkus/pgKubernetesTutorial)<br>(results, info)          |                                 | yes                             |                               |                    |                   |                                              |                                    |
-| Geekbench 3<br>(results, info)                  |                                 |                                 | yes                           |                    |                   |                                              |                                    |
-| IOPing<br>(results, info)                       |                                 | yes                             | yes                           |                    |                   |                                              |                                    |
-| IOzone<br>(results, info)                       |                                 |                                 |                               |                    |                   |                                              |                                    |
-
-</details>
 
 # How to run it
 
 Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).
+
+<!-- FIXME
 
 <details>
 <summary>Architecture</summary>
@@ -79,10 +69,6 @@ Here is a description of these two script files:
             ```bash
             kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
             ```
-    -  This scripts needs to know the `kubeconfig` file path:
-        ```bash
-        $ export KUBECONFIG=<kubeconfig_path>  
-        ```
     - What does the `dk8s-cronjob` image do:
         1. It simply downloads this repo
             ```docker
@@ -90,6 +76,8 @@ Here is a description of these two script files:
             ```
 
 </details>
+
+-->
 
 <details>
 <summary>Preliminary steps to run benchmarks locally</summary>
@@ -146,9 +134,9 @@ When you're done:
     ```bash
     $ kubectl apply -f experiment-conf.yaml
     ```
-1. Create a [Secret](https://kubernetes.io/docs/concepts/configuration/secret) from the `kubeconfig` file:
+1. Run the configuration script:
     ```bash
-    $ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
+    $ ./configure.sh
     ```
 1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
     ```yaml
@@ -159,9 +147,25 @@ When you're done:
     $ kubectl apply -f cronjob.yaml
     ```
 
+# Documentation
+<!-- TODO -->
+
 # References
 - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))
 - The [Prometheus](https://prometheus.io/) monitoring system
   - [Grafana](https://grafana.com/) for time series analytics
 - [Kubernetes](https://kubernetes.io/docs/reference/)
   - [`minikube`](https://github.com/kubernetes/minikube) (and its [documentation](https://minikube.sigs.k8s.io/docs/))
+- <details>
+    <summary>Other potentially interesting benchmarks not included in PerfKitBenchmarker</summary>
+    <br>
+
+    |                              | Distributed                        | File I/O                        | CPU performance               | Memory utilization | Avg. queue length | Scheduler successfulness                     | Useful busy time                   |
+    |------------------------------|------------------------------|---------------------------------|-------------------------------|--------------------|-------------------|----------------------------------------------|------------------------------------|
+    |                              | <sub><sup>Requires the cooperation of multiple nodes</sup></sub> | <sub><sup>Requests per second, throughput</sup></sub> | <sup><sub>Task completion time, latency</sup></sub> |                    | <sup><sub>Workload stats</sup></sub>    | <sup><sub># successful allocations / total allocations</sup></sub> | <sup><sub>Time spent scheduling / total time</sup></sub> |
+    | [PostgreSQL pg_bench](https://github.com/jberkus/pgKubernetesTutorial)<br>(results, info)          |                                 | yes                             |                               |                    |                   |                                              |                                    |
+    | Geekbench 3<br>(results, info)                  |                                 |                                 | yes                           |                    |                   |                                              |                                    |
+    | IOPing<br>(results, info)                       |                                 | yes                             | yes                           |                    |                   |                                              |                                    |
+    | IOzone<br>(results, info)                       |                                 |                                 |                               |                    |                   |                                              |                                    |
+
+    </details>
