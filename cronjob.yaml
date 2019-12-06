@@ -69,18 +69,18 @@ spec:
               name: dk8s-kubeconfig
               readOnly: true
               subPath: dk8s-kubeconfig
-            - mountPath: /home/root/distributed-k8s/benchmarks-conf.yaml
-              name: dk8s-benchconfig
+            - mountPath: /home/root/distributed-k8s/dk8s-num-pods.yaml
+              name: dk8s-num-pods
               readOnly: true
-              subPath: benchmarks-conf.yaml
+              subPath: dk8s-num-pods.yaml
           restartPolicy: Never
           serviceAccountName: dk8s
           volumes:
           - name: dk8s-kubeconfig
             secret:
               secretName: dk8s-kubeconfig
-          - name: dk8s-benchconfig
+          - name: dk8s-num-pods
             configMap:
-              name: dk8s-benchconfig
+              name: dk8s-num-pods
   schedule: '0 * * * *'
 status: {}

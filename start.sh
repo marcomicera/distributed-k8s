@@ -32,7 +32,7 @@ RESULTS_DIR=./results/tmp/$CURRENT_DATE
 CSV_RESULTS=$RESULTS_DIR/results.csv
 PUSHGATEWAY=$PUSHGATEWAY
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a\ --pushgateway\ $PUSHGATEWAY
-BENCHMARKS_CONFIG_FILE=benchmarks-conf.yaml
+BENCHMARKS_CONFIG_FILE=dk8s-num-pods.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$KUBECONFIG\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 
 # Check whether to run all benchmarks or not

@@ -126,9 +126,9 @@ When you're done:
    $ git clone git@github.com:marcomicera/distributed-k8s.git
    $ cd distributed-k8s
    ```
-1. Set benchmark-specific flags (like the number of pods to be used) in the [`benchmarks-conf.yaml`](benchmarks-conf.yaml) configuration file and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
+1. Set the number of pods to be used for each benchmark in the [`dk8s-num-pods.yaml`](dk8s-num-pods.yaml) file and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
-    $ kubectl create configmap dk8s-benchconfig --from-file=benchmarks-conf.yaml
+    $ kubectl create configmap dk8s-num-pods --from-file=dk8s-num-pods.yaml
     ``` 
 1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`experiment-conf.yaml`](experiment-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
