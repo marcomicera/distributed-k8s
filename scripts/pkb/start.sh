@@ -24,7 +24,7 @@ fi
 VERBOSE=false
 
 # Base directory of this repository
-BASEDIR=../..
+BASEDIR=.
 
 # Benchmarks config
 KUBECONFIG=$BASEDIR/.config/dk8s-kubeconfig
