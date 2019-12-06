@@ -134,9 +134,9 @@ When you're done:
     ```bash
     $ kubectl apply -f dk8s-global-conf.yaml
     ```
-1. Run the configuration script:
+1. Create a dedicated [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
     ```bash
-    $ ./configure.sh
+    $ ./dk8s-create-sa.sh
     ```
 1. Set the frequency with which benchmarks will be run in [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml)
     ```yaml
