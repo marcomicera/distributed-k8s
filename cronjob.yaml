@@ -54,12 +54,12 @@ spec:
             - name: PUSHGATEWAY
               valueFrom:
                 configMapKeyRef:
-                  name: dk8s-expconf
+                  name: dk8s-global-conf
                   key: pushgateway
             - name: BENCHMARKS_TO_RUN
               valueFrom:
                 configMapKeyRef:
-                  name: dk8s-expconf
+                  name: dk8s-global-conf
                   key: benchmarks
             image: marcomicera/dk8s-cronjob:latest
             name: dk8s-cronjob

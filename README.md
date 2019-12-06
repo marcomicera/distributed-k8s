@@ -130,9 +130,9 @@ When you're done:
     ```bash
     $ kubectl create configmap dk8s-num-pods --from-file=dk8s-num-pods.yaml
     ``` 
-1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`experiment-conf.yaml`](experiment-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
+1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`dk8s-global-conf.yaml`](dk8s-global-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
-    $ kubectl apply -f experiment-conf.yaml
+    $ kubectl apply -f dk8s-global-conf.yaml
     ```
 1. Run the configuration script:
     ```bash

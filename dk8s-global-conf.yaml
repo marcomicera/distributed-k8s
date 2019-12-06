@@ -4,5 +4,5 @@ data:
   pushgateway: pushgateway.address.test
 kind: ConfigMap
 metadata:
-  name: dk8s-expconf
+  name: dk8s-global-conf
   namespace: mmicera-ns1
