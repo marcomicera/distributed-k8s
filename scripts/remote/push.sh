@@ -18,4 +18,5 @@ rsync -azvP . $HOST:$REMOTE_FOLDER/ \
   --exclude=.idea \
   --exclude=venv \
   --exclude=pkb/PerfkitBenchmarker.srctrl* \
-  --exclude=pkb/.tox
+  --exclude=pkb/.tox \
+  --delete
