@@ -5,11 +5,15 @@ Results can be exposed to a [Prometheus Pushgateway](https://github.com/promethe
 
 ### Supported benchmarks
 - `block_storage_workload`
+- `cassandra_ycsb`
+- `cassandra_stress`
 - `cluster_boot`
 - `fio`
 - `iperf`
 - `mesh_network`
+- `mongodb_ycsb`
 - `netperf`
+- `redis`
 
 # How to run it
 
