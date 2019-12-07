@@ -16,23 +16,26 @@ AVAILABLE_BENCHMARKS=(
 
 # Script usage help message
 if (( $# < 1 )); then
-    printf "Usage: ./start.sh <benchmarks_to_run>\n\nSupported benchmarks on Kubernetes: {\n"
+    printf "Usage: scripts/pkb/start.sh <benchmarks_to_run>\n\nSupported benchmarks on Kubernetes: {\n"
     printf '\t%s\n' "${AVAILABLE_BENCHMARKS[@]}"
     printf "}\n\nOr simply type 'all' to run all of them.\n"
     exit 1
 fi
 VERBOSE=false
 
+# Base directory of this repository
+BASEDIR=.
+
 # Benchmarks config
-KUBECONFIG=.config/dk8s-kubeconfig
+KUBECONFIG=$BASEDIR/.config/dk8s-kubeconfig
 THREADS=4
 PKB_IMAGE=marcomicera/dk8s-pkb:latest
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
-RESULTS_DIR=./results/tmp/$CURRENT_DATE
+RESULTS_DIR=$BASEDIR/results/tmp/$CURRENT_DATE
 CSV_RESULTS=$RESULTS_DIR/results.csv
 PUSHGATEWAY=$PUSHGATEWAY
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a\ --pushgateway\ $PUSHGATEWAY
-BENCHMARKS_CONFIG_FILE=benchmarks-conf.yaml
+BENCHMARKS_CONFIG_FILE=$BASEDIR/dk8s-num-pods.yaml
 KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$KUBECONFIG\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 
 # Check whether to run all benchmarks or not

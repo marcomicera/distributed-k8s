@@ -45,19 +45,19 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
 <summary>Architecture</summary>
 <br>
 
-Periodic benchmarks are launched by means of the [`cronjob.yaml`](cronjob.yaml) file: it runs the [`start.sh`](start.sh) script inside pods to run [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
-The [`cronjob.yaml`](cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
+Periodic benchmarks are launched by means of the [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file: it runs the [`scripts/pkb/start.sh`](scripts/pkb/start.sh) script inside pods to run [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
+The [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
 
 Here is a description of these two script files:
 
-1. `./start.sh $BENCHMARKS` launches [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once:
+1. `scripts/pkb/start.sh $BENCHMARKS` launches [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once:
     - What [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) does:
         1. It creates pods using the `dk8s-pkb` image
         1. It executes benchmarks into these pods
         1. It retrieves results from all pods
         1. It exports results using different publishers (e.g., on `stdout`, CSV file, etc.)
     - It is executed:
-        - Locally, if launched by the [`./start.sh`](start.sh) script
+        - Locally, if launched by the [`scripts/pkb/start.sh`](scripts/pkb/start.sh) script
         - Using the `dk8s-cronjob` image, if launched periodically (see next point)
     - What does the `dk8s-pkb` image do:
         1. Installs dependencies
@@ -67,7 +67,7 @@ Here is a description of these two script files:
     - How it works
         1. It runs [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) in a CronJob, using the `dk8s-cronjob` image
             ```bash
-            kubectl run --image=dk8s-cronjob -- /bin/sh -c "./start.sh $BENCHMARKS"
+            kubectl run --image=dk8s-cronjob -- /bin/sh -c "scripts/pkb/start.sh $BENCHMARKS"
             ```
     - What does the `dk8s-cronjob` image do:
         1. It simply downloads this repo
@@ -125,26 +125,27 @@ When you're done:
     ```bash
    $ git clone git@github.com:marcomicera/distributed-k8s.git
    $ cd distributed-k8s
+   $ git submodule update --init --recursive
    ```
-1. Set benchmark-specific flags (like the number of pods to be used) in the [`benchmarks-conf.yaml`](benchmarks-conf.yaml) configuration file and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
+1. Set the number of pods to be used for each benchmark in the [`dk8s-num-pods.yaml`](dk8s-num-pods.yaml) file and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
-    $ kubectl create configmap dk8s-benchconfig --from-file=benchmarks-conf.yaml
+    $ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
     ``` 
-1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`experiment-conf.yaml`](experiment-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
+1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`dk8s-global-conf.yaml`](dk8s-global-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
-    $ kubectl apply -f experiment-conf.yaml
+    $ kubectl apply -f dk8s-global-conf.yaml
     ```
-1. Run the configuration script:
+1. Create a dedicated [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
     ```bash
-    $ ./configure.sh
+    $ ./dk8s-create-sa.sh
     ```
-1. Set the frequency with which benchmarks will be run in [`cronjob.yaml`](cronjob.yaml)
+1. Set the frequency with which benchmarks will be run in [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml)
     ```yaml
     schedule: '0 * * * *'
     ```
 1. Launch benchmarks periodically:
     ```bash
-    $ kubectl apply -f cronjob.yaml
+    $ kubectl apply -f dk8s-pkb-cronjob.yaml
     ```
 
 # Documentation
