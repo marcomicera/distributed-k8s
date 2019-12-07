@@ -125,10 +125,11 @@ When you're done:
     ```bash
    $ git clone git@github.com:marcomicera/distributed-k8s.git
    $ cd distributed-k8s
+   $ git submodule update --init --recursive
    ```
 1. Set the number of pods to be used for each benchmark in the [`dk8s-num-pods.yaml`](dk8s-num-pods.yaml) file and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
-    $ kubectl create configmap dk8s-num-pods --from-file=dk8s-num-pods.yaml
+    $ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
     ``` 
 1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`dk8s-global-conf.yaml`](dk8s-global-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
     ```bash
