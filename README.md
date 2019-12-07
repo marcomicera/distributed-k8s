@@ -33,51 +33,9 @@ Set difference between the [Kubernetes-compatible benchmark list](https://github
 
 </details>
 
-
-
 # How to run it
 
 Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).
-
-<!-- FIXME
-
-<details>
-<summary>Architecture</summary>
-<br>
-
-Periodic benchmarks are launched by means of the [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file: it runs the [`scripts/pkb/start.sh`](scripts/pkb/start.sh) script inside pods to run [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
-The [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
-
-Here is a description of these two script files:
-
-1. `scripts/pkb/start.sh $BENCHMARKS` launches [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once:
-    - What [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) does:
-        1. It creates pods using the `dk8s-pkb` image
-        1. It executes benchmarks into these pods
-        1. It retrieves results from all pods
-        1. It exports results using different publishers (e.g., on `stdout`, CSV file, etc.)
-    - It is executed:
-        - Locally, if launched by the [`scripts/pkb/start.sh`](scripts/pkb/start.sh) script
-        - Using the `dk8s-cronjob` image, if launched periodically (see next point)
-    - What does the `dk8s-pkb` image do:
-        1. Installs dependencies
-        1. Launches benchmarks
-
-1.  `./start_cron.sh $BENCHMARKS` launches benchmarks periodically
-    - How it works
-        1. It runs [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) in a CronJob, using the `dk8s-cronjob` image
-            ```bash
-            kubectl run --image=dk8s-cronjob -- /bin/sh -c "scripts/pkb/start.sh $BENCHMARKS"
-            ```
-    - What does the `dk8s-cronjob` image do:
-        1. It simply downloads this repo
-            ```docker
-            RUN git clone git@github.com:marcomicera/distributed-k8s.git
-            ```
-
-</details>
-
--->
 
 <details>
 <summary>Preliminary steps to run benchmarks locally</summary>
@@ -131,25 +89,34 @@ When you're done:
     ```bash
     $ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
     ``` 
-1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`dk8s-global-conf.yaml`](dk8s-global-conf.yaml) and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
-    ```bash
-    $ kubectl apply -f dk8s-global-conf.yaml
-    ```
 1. Create a dedicated [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
     ```bash
     $ ./dk8s-create-sa.sh
     ```
-1. Set the frequency with which benchmarks will be run in [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml)
+1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
+1. Launch a benchmark periodically. E.g., for `iperf`:
+    ```bash
+    $ kubectl kustomize yaml/benchmarks/iperf | kubectl apply -f -
+    ```
+
+<details>
+<summary>Launch more benchmarks sequentially</summary>
+<br>
+
+1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
+1. Set the frequency with which benchmarks will be run in [`yaml/base/dk8s-pkb-cronjob.yaml`](yaml/base/dk8s-pkb-cronjob.yaml)
     ```yaml
     schedule: '0 * * * *'
     ```
-1. Launch benchmarks periodically:
+1. Launch this set of benchmarks periodically:
     ```bash
-    $ kubectl apply -f dk8s-pkb-cronjob.yaml
+    $ kubectl kustomize yaml/base | kubectl apply -f -
     ```
 
+</details>
+
 # Documentation
-<!-- TODO -->
+Check [`doc/README.md`](doc/README.md) for the complete documentation.
 
 # References
 - Google's [`PerfKitBenchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) ([description](https://cloud.google.com/free/docs/measure-compare-performance))

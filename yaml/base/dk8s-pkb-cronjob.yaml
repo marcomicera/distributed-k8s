@@ -1,49 +1,12 @@
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
- name: dk8s-role
-rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "create", "delete"]
-- apiGroups: [""]
-  resources: ["pods/exec"]
-  verbs: ["create"]
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: dk8s-rb
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: dk8s-role
-subjects:
-- kind: ServiceAccount
-  name: dk8s
-
----
-
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  creationTimestamp: null
-  labels:
-    run: dk8s-cronjob
-  name: dk8s-cronjob
+  name: dk8s-pkb
 spec:
   concurrencyPolicy: Allow
   jobTemplate:
-    metadata:
-      creationTimestamp: null
     spec:
       template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            run: dk8s-cronjob
         spec:
           containers:
           - args:
@@ -54,15 +17,15 @@ spec:
             - name: PUSHGATEWAY
               valueFrom:
                 configMapKeyRef:
-                  name: dk8s-global-conf
+                  name: dk8s-conf
                   key: pushgateway
             - name: BENCHMARKS_TO_RUN
               valueFrom:
                 configMapKeyRef:
-                  name: dk8s-global-conf
+                  name: dk8s-conf
                   key: benchmarks
             image: marcomicera/dk8s-cronjob:latest
-            name: dk8s-cronjob
+            name: dk8s-pkb
             resources: {}
             volumeMounts:
             - mountPath: /home/root/distributed-k8s/.config/dk8s-kubeconfig
