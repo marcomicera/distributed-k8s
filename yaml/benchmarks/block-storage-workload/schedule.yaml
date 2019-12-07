@@ -3,5 +3,5 @@ kind: CronJob
 metadata:
   name: dk8s-pkb
 spec:
-  schedule: '*/30 * * * *'
+  schedule: '1 2 */2 * *'
 status: {}
