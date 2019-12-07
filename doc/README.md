@@ -36,12 +36,11 @@ There are four main categories of [PerfKit Benchmarker](https://github.com/Googl
 
 ## 3.2 [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork changes
 Besides minor bug fixes, the custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork has been extended with two additional "results writers", i.e., endpoints to which results are exported at the end of a single benchmark execution.
-More specifically, it now includes a
-\begin{mylist}
-    \item CSV writer, which gradually adds entries to a CSV file as soon as benchmarks finish, and
-    \item a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) exporter, which exposes results according to the [OpenMetrics](https://openmetrics.io/) format\footnote{\href{https://openmetrics.io}{openmetrics.io}}
-\end{mylist}.
-The official [Prometheus](https://prometheus.io/) Python client has been used to accomplish the latter task\footnote{\href{https://github.com/prometheus/client_python}{github.com/prometheus/client\_python}}.
+More specifically, it now includes a:
+- CSV writer, which gradually adds entries to a CSV file as soon as benchmarks finish, and
+- a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) exporter, which exposes results according to the [OpenMetrics](https://openmetrics.io/) format.
+
+The [official Prometheus Python client](https://github.com/prometheus/client_python) has been used to accomplish the latter task.
 
 <!-- 
 
