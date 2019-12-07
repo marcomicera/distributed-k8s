@@ -29,21 +29,12 @@ subjects:
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  creationTimestamp: null
-  labels:
-    run: dk8s-cronjob
-  name: dk8s-cronjob
+  name: dk8s-pkb
 spec:
   concurrencyPolicy: Allow
   jobTemplate:
-    metadata:
-      creationTimestamp: null
     spec:
       template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            run: dk8s-cronjob
         spec:
           containers:
           - args:
@@ -62,7 +53,7 @@ spec:
                   name: dk8s-global-conf
                   key: benchmarks
             image: marcomicera/dk8s-cronjob:latest
-            name: dk8s-cronjob
+            name: dk8s-pkb
             resources: {}
             volumeMounts:
             - mountPath: /home/root/distributed-k8s/.config/dk8s-kubeconfig
