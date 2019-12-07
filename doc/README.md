@@ -4,6 +4,7 @@
 - [2. Existing work](#2-existing-work)
 - [3. Implementation](#3-implementation)
   * [3.1 Supported benchmarks](#31-supported-benchmarks)
+  * [3.2 PerfKit Benchmarker fork changes](#32-perfkit-benchmarker-fork-changes)
 <!-- TODO -->
 
 # 1. Introduction
