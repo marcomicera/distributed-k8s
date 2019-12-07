@@ -1,8 +1,9 @@
+# `kubectl kustomize yaml/base | kubectl apply -f -` will
+# automatically update this ConfigMap
 apiVersion: v1
 data:
   benchmarks: cluster_boot fio
   pushgateway: pushgateway.address.test
 kind: ConfigMap
 metadata:
-  name: dk8s-global-conf
-  namespace: mmicera-ns1
+  name: dk8s-conf

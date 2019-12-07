@@ -1,0 +1,5 @@
+resources:
+  - dk8s-conf.yaml # benchmarks list, pushgateway address
+  - dk8s-role.yaml # PerfKit Benchmarker permissions
+  - dk8s-role-binding.yaml # associating Role to ServiceAccount
+  - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
