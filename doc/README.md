@@ -16,8 +16,7 @@
   * [Configuration](#configuration)
     + [Number of Kubernetes pods](#number-of-kubernetes-pods)
     + [CronJob frequency](#-cronjob-frequency)
-    + [Experiment configuration file](#experiment-configuration-file)
-    + [Specifying the kubeconfig file](#specifying-the-kubeconfig-file)
+    + [Benchmarks list and Pushgateway address](#benchmarks-list-and-pushgateway-address)
   * [Launching benchmarks](#launching-benchmarks)
 - [Conclusions](#conclusions)
 
@@ -114,7 +113,7 @@ All these files can be combined together and applied with a single command:
 $ kubectl kustomize yaml/base | kubectl apply -f -
 ```
 
-Before launching this command, [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as describe in the [Guide section](#guide).
+Before launching this command, [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as described in the [Guide section](#guide).
 
 #### Dedicated CronJob files for benchmarks
 When launching single benchmarks, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) can be used to override some [Kubernetes](https://kubernetes.io/) object fields of the [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml).
@@ -137,56 +136,24 @@ This file inherits all [Kubernetes](https://kubernetes.io/) objects of the [base
 - defines the list of benchmarks to be executed (a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) in [`yaml/benchmarks/fio/benchmarks-list.yaml`](../yaml/benchmarks/fio/benchmarks-list.yaml) containing only `fio` in the list) and,
 - overrides the frequency with which this benchmark is run (based on its average completion time).
 
-<!-- FIXME 
-## Passing files to containers
-Containers launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) need to find two files in their filesystem: a benchmarks configuration file and a [Kubernetes](https://kubernetes.io/) [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file, both described in \cref{benchmarks_conf} and \cref{kubeconfig}.
-This is achieved by creating [Kubernetes](https://kubernetes.io/) [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) from these two files (\autoref{benchmarks_conf_secret} and \autoref{kubeconfig_secret}).
-\autoref{secret_mounting} depicts a code snippet from the \href{https://github.com/marcomicera/distributed-k8s/blob/master/cronjob.yaml}{\texttt{cronjob.yaml}} file that shows how they are mounted in containers' filesystem.
-
-```yaml
-kind: CronJob
-spec:
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            image: marcomicera/dk8s-cronjob:latest
-            volumeMounts:
-            - mountPath: /home/root/distributed-k8s/kubeconfig
-              name: dk8s-kubeconfig
-              readOnly: true
-              subPath: kubeconfig
-            - mountPath: /home/root/distributed-k8s/benchmarks-conf.yaml
-              name: dk8s-benchconfig
-              readOnly: true
-              subPath: benchmarks-conf.yaml
-          volumes:
-          - name: dk8s-kubeconfig
-            secret:
-              secretName: dk8s-kubeconfig
-          - name: dk8s-benchconfig
-            secret:
-              secretName: dk8s-benchconfig
-```
--->
-
 ## Permissions
-<!-- ServiceAccount, kubeconfig, Role, RoleBinding -->
+In the following [Guide section](#guide), the user is asked to run the [`dk8s-create-sa.sh`](../dk8s-create-sa.sh) script before launching [`dk8s`](https://github.com/marcomicera/distributed-k8s).
+It is based on an [external gist imported as a git submodule](https://gist.github.com/marcomicera/ba340e9478e1c0c716313971cc3e2e95/3d62b107b41706dbf422a7ac62c01ea4d22ead9b).
+In short, it:
+1. creates a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) in the current namespace,
+1. creates a corresponding [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file and,
+1. creates a secret from it.
+
+When [combining base Kubernetes objects in order to launch a custom list of benchmarks](#the-base-cronjob-file-running-an-user-defined-benchmarks-list), a proper [Role and RoleBinding object](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) are included in the final YAML file, so that the previously-created [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) can be used.
 
 # Guide
-This guide refers to the \href{https://github.com/marcomicera/distributed-k8s}{github.com/marcomicera/distributed-k8s} repository, clonable with the following command:
-
-```bash
-$ git clone git@github.com:marcomicera/distributed-k8s.git
-$ cd distributed-k8s
-```
+This section explains the [How to run it section](../README.md#how-to-run-it) of the [main `README.md` file](../README.md) in a more detailed manner.
 
 ## Configuration
 This section describes all configuration steps to be made before launching benchmarks.
 
 ### Number of [Kubernetes](https://kubernetes.io/) pods
-The number of [Kubernetes](https://kubernetes.io/) pods to be used for every benchmark is defined in the \href{https://github.com/marcomicera/distributed-k8s/blob/master/benchmarks-conf.yaml}{\texttt{{\justify}benchmarks-conf.yaml}} configuration file.
+The number of [Kubernetes](https://kubernetes.io/) pods to be used for every benchmark is defined in the [`dk8s-num-pods.yaml`](../dk8s-num-pods.yaml) configuration file. Here is an extract:
 
 ```yaml
 flags:
@@ -202,38 +169,41 @@ block_storage_workload:
       vm_count: 1
 ```
 
-It is worth noticing that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) uses the term \textit{VM} as a generalization of \textit{[Kubernetes](https://kubernetes.io/) pod} since it supports multiple cloud providers.
+It is worth noticing that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) uses the term _VM_ as a generalization of _[Kubernetes](https://kubernetes.io/) pod_ since it supports multiple cloud providers.
 
-Finally, the user needs to create a [Kubernetes](https://kubernetes.io/) \href{https://kubernetes.io/docs/concepts/configuration/secret/}{Secret} from this file.
+Finally, the user needs to create a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) from this file.
 
 ```bash
-$ kubectl create secret generic dk8s-benchconfig --from-file=benchmarks-conf.yaml
+$ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
 ```
 
-This will make this file available to the container running [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
+This will then be mounted as a file in the container running [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker).
 
 ### [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency
-Next, the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency can be adjusted in the \href{https://github.com/marcomicera/distributed-k8s/blob/master/cronjob.yaml}{\texttt{cronjob.yaml}} file:
+Next, the general [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency can be adjusted in the [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) file:
 
 ```yaml
 schedule: '*/30 * * * *'
 ```
 
-The schedule follows the \href{https://en.wikipedia.org/wiki/Cron}{Cron} format\footnote{\href{https://en.wikipedia.org/wiki/Cron}{en.wikipedia.org/wiki/Cron}}.
+The schedule follows the [Cron](https://en.wikipedia.org/wiki/Cron) format.
+There is no need to specify this for the [one-benchmark-only CronJob files](#dedicated-cronjob-files-for-benchmarks), as the frequency will be automatically set by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/).
 
-### Experiment configuration file
-The \href{https://github.com/marcomicera/distributed-k8s/blob/master/experiment-conf.yaml}{\texttt{experiment-conf.yaml}} file contains two experiment options, namely
-\begin{mylist}
-    \item the [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) address, and
-    \item the list of benchmarks to run
-\end{mylist}.
+### Benchmarks list and [Pushgateway](https://github.com/prometheus/pushgateway) address
+The [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) file contains two experiment options, namely
+- the [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) address, and
+- the list of benchmarks to run.
 
 ```yaml
+# `kubectl kustomize yaml/base | kubectl apply -f -` will
+# automatically update this ConfigMap
 apiVersion: v1
 data:
   benchmarks: cluster_boot fio
   pushgateway: pushgateway.address.test
 kind: ConfigMap
+metadata:
+  name: dk8s-conf
 ```
 
 Experiments can be chosen amongst this list:
@@ -248,67 +218,22 @@ Experiments can be chosen amongst this list:
 - `netperf`
 - `redis`
 
-Finally, the user must apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
-
-```bash
-$ kubectl apply -f experiment-conf.yaml
-```
-
-### Specifying the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file
-Similarly to \cref{benchmarks_conf}, also the [Kubernetes](https://kubernetes.io/) \href{https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/}{kubeconfig} file needs to be passed to containers as a [Kubernetes](https://kubernetes.io/) \href{https://kubernetes.io/docs/concepts/configuration/secret/}{Secret}:
-
-```bash
-$ kubectl create secret generic dk8s-kubeconfig --from-file=<kubeconfig_path>
-```
+This [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) will be automatically applied/updated by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/).
 
 ## Launching benchmarks
-It is enough to launch the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) with:
+Benchmarks can be either launched singularly with (e.g., for [iperf](https://github.com/esnet/iperf)):
 
 ```bash
-$ kubectl apply -f cronjob.yaml
+$ kubectl kustomize yaml/benchmarks/iperf | kubectl apply -f -
+```
+
+or sequentially, after [having updated the list of benchmarks to run](#benchmarks-list-and-pushgateway-address):
+
+```bash
+$ kubectl kustomize yaml/base | kubectl apply -f -
 ```
 
 # Conclusions
-The resulting benchmarking tool\footnote{\href{https://github.com/marcomicera/distributed-k8s}{github.com/marcomicera/distributed-k8s}} allows users to periodically (\cref{periodic_benchmarks}) run various kinds of benchmarks (\cref{supported_benchmarks}) on a [Kubernetes](https://kubernetes.io/) cluster.
-The custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork\footnote{\href{https://github.com/marcomicera/PerfKitBenchmarker}{github.com/marcomicera/PerfKitBenchmarker}} (\cref{custom_pkb}) includes physical node identifiers into benchmark results (\cref{node_id}) and gradually exposes them to a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) following the [OpenMetrics](https://openmetrics.io/) format.
-The tool is configurable through a few handy configuration files (\cref{configuration}).
-
-<!-- FIXME
-
-<details>
-<summary>Architecture</summary>
-<br>
-
-Periodic benchmarks are launched by means of the [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file: it runs the [`scripts/pkb/start.sh`](scripts/pkb/start.sh) script inside pods to run [`PerfKit Benchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
-The [`dk8s-pkb-cronjob.yaml`](dk8s-pkb-cronjob.yaml) file has been generated with the [`start_cron.sh`](start_cron.sh) script.
-
-Here is a description of these two script files:
-
-1. `scripts/pkb/start.sh $BENCHMARKS` launches [`PerfKit Benchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) once:
-    - What [`PerfKit Benchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) does:
-        1. It creates pods using the `dk8s-pkb` image
-        1. It executes benchmarks into these pods
-        1. It retrieves results from all pods
-        1. It exports results using different publishers (e.g., on `stdout`, CSV file, etc.)
-    - It is executed:
-        - Locally, if launched by the [`scripts/pkb/start.sh`](scripts/pkb/start.sh) script
-        - Using the `dk8s-cronjob` image, if launched periodically (see next point)
-    - What does the `dk8s-pkb` image do:
-        1. Installs dependencies
-        1. Launches benchmarks
-
-1.  `./start_cron.sh $BENCHMARKS` launches benchmarks periodically
-    - How it works
-        1. It runs [`PerfKit Benchmarker`](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) in a CronJob, using the `dk8s-cronjob` image
-            ```bash
-            kubectl run --image=dk8s-cronjob -- /bin/sh -c "scripts/pkb/start.sh $BENCHMARKS"
-            ```
-    - What does the `dk8s-cronjob` image do:
-        1. It simply downloads this repo
-            ```docker
-            RUN git clone git@github.com:marcomicera/distributed-k8s.git
-            ```
-
-</details>
-
--->
+[`dk8s`](https://github.com/marcomicera/distributed-k8s) is able to [periodically](#running-benchmarks-periodically) run [various kinds](#supported-benchmarks) of benchmarks on a [Kubernetes](https://kubernetes.io/) cluster.
+The custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork (more details [here](#-perfkit-benchmarker-fork-changes)) includes [physical node identifiers into benchmark results](#including-node-ids-in-benchmark-results) and gradually exposes them to a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) following the [OpenMetrics](https://openmetrics.io/) format.
+The tool is configurable through a few handy [configuration files](#configuration).
