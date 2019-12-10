@@ -21,7 +21,7 @@
 - [Conclusions](#conclusions)
 
 # Introduction
-Running benchmarks on the cloud is not only useful to compare different providers but also to measure the differences in the underlying physical hardware.
+Running benchmarks on the cloud is not only useful to compare different providers but also to measure the differences when changing the  operating conditions of the cluster (e.g., updating the underlying physical hardware, replacing the CNI provider, adding more nodes, running different workloads in background, etc.).
 [`distributed-k8s`](https://github.com/marcomicera/distributed-k8s) (a.k.a. [`dk8s`](https://github.com/marcomicera/distributed-k8s)) focuses on the latter aspect, specifically on [Kubernetes](https://kubernetes.io/): it can run a varied [list of benchmarks](https://github.com/marcomicera/distributed-k8s#supported-benchmarks) and expose their results to the [Prometheus](https://prometheus.io/) monitoring system.
 
 # Existing work
