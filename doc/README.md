@@ -24,7 +24,7 @@ Running benchmarks on the cloud is not only useful to compare different provider
 
 # Existing work
 Adapting existing benchmarks to run on [Kubernetes](https://kubernetes.io/) may not be straight-forward, especially when dealing with distributed ones that, by definition, need to involve multiple pods.
-Yet there are [some attempts](https://github.com/jberkus/pgKubernetesTutorial) online that try to do so.
+Yet there are [some attempts online](https://github.com/jberkus/pgKubernetesTutorial) that try to do so.
 On the other hand, retrieving benchmark results from different pods requires way more work than just adapting them to [Kubernetes](https://kubernetes.io/).
 
 This is where [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) comes into play, an open-source tool by [Google Cloud Platform](https://cloud.google.com/) that contains a set of benchmarks that are ready to be run on several cloud offerings, including [Kubernetes](https://kubernetes.io/).
@@ -37,7 +37,7 @@ In short, [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBe
 - makes it easy to add additional "results writers" so that results can be exported in different ways.
 
 # Implementation
-This section aims to describe some system and implementation details needed to accomplish what has been described in [the introduction](#introduction).
+This section aims to describe some system and implementation details needed to accomplish what has been described in the [introduction](#introduction).
 
 ## Supported benchmarks
 There are four main categories of [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable on [Kubernetes](https://kubernetes.io/):
@@ -46,13 +46,11 @@ There are four main categories of [PerfKit Benchmarker](https://github.com/Googl
 - networking-oriented (e.g., [iperf](https://github.com/esnet/iperf) and [netperf](https://hewlettpackard.github.io/netperf/)), and
 - resource manager-oriented (e.g., measuring VM placement latency and boot time).
 
-## [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork changes
-Besides minor bug fixes, the custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork has been extended with two additional "results writers", i.e., endpoints to which results are exported at the end of a single benchmark execution.
-More specifically, it now includes a:
-- CSV writer, which gradually adds entries to a CSV file as soon as benchmarks finish, and
-- a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) exporter, which exposes results according to the [OpenMetrics](https://openmetrics.io/) format.
-
-The [official Prometheus Python client](https://github.com/prometheus/client_python) has been used to accomplish the latter task.
+## [PerfKit Benchmarker fork](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) changes
+Besides minor bug fixes, the custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
+More specifically, it now includes a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) exporter, which exposes results according to the [OpenMetrics](https://openmetrics.io/) format.
+The [official Prometheus Python client](https://github.com/prometheus/client_python) has been used to implement this result writer.
+Furthermore, the CSV writer can now write results in "append" mode, allowing it to gradually add entries to the same CSV file as soon as benchmarks finish.
 
 ### Including node IDs in benchmark results
 While [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) does include physical node information in benchmark results (e.g., `lscpu` command output), it does not include [Kubernetes](https://kubernetes.io/) node IDs.
@@ -71,7 +69,7 @@ To do this, the [Kubernetes](https://kubernetes.io/) _[Downward API](https://kub
 }]
 ```
 
-This way, [Kubernetes](https://kubernetes.io/) pods can retrieve the node ID of the physical machine on which they are running, and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) can successfully include this information in the results.
+This way, each [Kubernetes](https://kubernetes.io/) pod can retrieve the node ID of the physical machine on which it is running, and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) can successfully include this information in the results.
 
 ## Running benchmarks periodically
 Benchmarks are run periodically as a [Kubernetes](https://kubernetes.io/) _[CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)_.
