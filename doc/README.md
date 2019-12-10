@@ -73,13 +73,13 @@ This way, each [Kubernetes](https://kubernetes.io/) pod can retrieve the node ID
 
 ## Running benchmarks periodically
 Benchmarks are run periodically as a [Kubernetes](https://kubernetes.io/) _[CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)_.
-It periodically executes a shell script ([`start.sh`](https://github.com/marcomicera/distributed-k8s/blob/master/start.sh)) that cycles through all the benchmarks to be executed and, for each one of them, it
+It periodically executes a shell script ([`scripts/pkb/start.sh`](../scripts/pkb/start.sh)) that cycles through all the benchmarks to be executed and, for each one of them, it
 1. checks whether it is compatible with [Kubernetes](https://kubernetes.io/), and
 1. builds a proper argument list to be passed to [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
 
 ### Docker images
 A [Kubernetes](https://kubernetes.io/) [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) launches periodic jobs in Docker containers.
-The [CronJob file](yaml/base/dk8s-pkb-cronjob.yaml) of this repository mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
+The [CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml) of this repository mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
 [`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), respectively.
 The latter takes care of resolving most of the dependencies needed by benchmarks so that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) will not waste any other time doing so.
 The former
