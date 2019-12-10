@@ -79,15 +79,19 @@ It periodically executes a shell script ([`scripts/pkb/start.sh`](../scripts/pkb
 
 ### Docker images
 A [Kubernetes](https://kubernetes.io/) [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) launches periodic jobs in Docker containers.
-The [CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml) of this repository mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
+The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
 [`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), respectively.
 The latter takes care of resolving most of the dependencies needed by benchmarks so that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) will not waste any other time doing so.
 The former
 1. installs the [Kubernetes](https://kubernetes.io/) command-line tool `kubectl`, and
 1. downloads [this repository](https://github.com/marcomicera/distributed-k8s), which also contains the previously-mentioned [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) as a git submodule.
 
+### The [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml)
+
+### Dedicated CronJob files for benchmarks
+
+<!-- FIXME 
 ## Passing files to containers
-<!-- FIXME -->
 Containers launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) need to find two files in their filesystem: a benchmarks configuration file and a [Kubernetes](https://kubernetes.io/) [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file, both described in \cref{benchmarks_conf} and \cref{kubeconfig}.
 This is achieved by creating [Kubernetes](https://kubernetes.io/) [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) from these two files (\autoref{benchmarks_conf_secret} and \autoref{kubeconfig_secret}).
 \autoref{secret_mounting} depicts a code snippet from the \href{https://github.com/marcomicera/distributed-k8s/blob/master/cronjob.yaml}{\texttt{cronjob.yaml}} file that shows how they are mounted in containers' filesystem.
@@ -118,6 +122,10 @@ spec:
             secret:
               secretName: dk8s-benchconfig
 ```
+-->
+
+## Permissions
+<!-- ServiceAccount, kubeconfig, Role, RoleBinding -->
 
 # Guide
 This guide refers to the \href{https://github.com/marcomicera/distributed-k8s}{github.com/marcomicera/distributed-k8s} repository, clonable with the following command:
