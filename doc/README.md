@@ -22,7 +22,8 @@
 
 # Introduction
 Running benchmarks on the cloud is not only useful to compare different providers but also to measure the differences when changing the  operating conditions of the cluster (e.g., updating the underlying physical hardware, replacing the CNI provider, adding more nodes, running different workloads in background, etc.).
-[`distributed-k8s`](https://github.com/marcomicera/distributed-k8s) (a.k.a. [`dk8s`](https://github.com/marcomicera/distributed-k8s)) focuses on the latter aspect, specifically on [Kubernetes](https://kubernetes.io/): it can run a varied [list of benchmarks](https://github.com/marcomicera/distributed-k8s#supported-benchmarks) and expose their results to the [Prometheus](https://prometheus.io/) monitoring system.
+
+[`distributed-k8s`](https://github.com/marcomicera/distributed-k8s) (a.k.a. [`dk8s`](https://github.com/marcomicera/distributed-k8s)) focuses on the latter aspect, specifically on [Kubernetes](https://kubernetes.io/): it can run a large [set of benchmarks](https://github.com/marcomicera/distributed-k8s#supported-benchmarks) and expose their results to the [Prometheus](https://prometheus.io/) monitoring system.
 
 # Existing work
 Adapting existing benchmarks to run on [Kubernetes](https://kubernetes.io/) may not be straight-forward, especially when dealing with distributed ones that, by definition, need to involve multiple pods.
@@ -49,7 +50,7 @@ There are four main categories of [PerfKit Benchmarker](https://github.com/Googl
 - resource manager-oriented (e.g., measuring VM placement latency and boot time).
 
 ## [PerfKit Benchmarker fork](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) changes
-Besides minor bug fixes, the custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
+Besides minor bug fixes, the current [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
 More specifically, it now includes a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) exporter, which exposes results according to the [OpenMetrics](https://openmetrics.io/) format.
 The [official Prometheus Python client](https://github.com/prometheus/client_python) has been used to implement this result writer.
 Furthermore, the CSV writer can now write results in "append" mode, allowing it to gradually add entries to the same CSV file as soon as benchmarks finish.
@@ -84,9 +85,10 @@ A [Kubernetes](https://kubernetes.io/) [CronJob](https://kubernetes.io/docs/conc
 The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
 [`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), respectively.
 The latter takes care of resolving most of the dependencies needed by benchmarks so that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) will not waste any other time doing so.
-The former
+
+Instead, the former:
 1. installs the [Kubernetes](https://kubernetes.io/) command-line tool `kubectl`, and
-1. downloads [this repository](https://github.com/marcomicera/distributed-k8s), which also contains the previously-mentioned [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) as a git submodule.
+1. downloads [this repository](https://github.com/marcomicera/distributed-k8s), which also contains the previously-mentioned [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) as a `git` submodule.
 
 ### [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) files and their structure
 [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) is a tool included in `kubectl` that allows users to customize [Kubernetes](https://kubernetes.io/) objects. In this project, it is mainly used to:
@@ -138,7 +140,7 @@ This file inherits all [Kubernetes](https://kubernetes.io/) objects of the [base
 
 ## Permissions
 In the following [Guide section](#guide), the user is asked to run the [`dk8s-create-sa.sh`](../dk8s-create-sa.sh) script before launching [`dk8s`](https://github.com/marcomicera/distributed-k8s).
-It is based on an [external gist imported as a git submodule](https://gist.github.com/marcomicera/ba340e9478e1c0c716313971cc3e2e95/3d62b107b41706dbf422a7ac62c01ea4d22ead9b).
+It is based on an [external gist imported as a `git` submodule](https://gist.github.com/marcomicera/ba340e9478e1c0c716313971cc3e2e95/3d62b107b41706dbf422a7ac62c01ea4d22ead9b).
 In short, it:
 1. creates a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) in the current namespace,
 1. creates a corresponding [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file and,
