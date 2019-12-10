@@ -8,8 +8,9 @@
     + [Including node IDs in benchmark results](#including-node-ids-in-benchmark-results)
   * [Running benchmarks periodically](#running-benchmarks-periodically)
     + [Docker images](#docker-images)
-    + [The base CronJob file](#the-base-cronjob-file)
-    + [Dedicated CronJob files for benchmarks](#dedicated-cronjob-files-for-benchmarks)
+    + [CronJob files and their structure](#cronjob-files-and-their-structure)
+      - [The base CronJob file running an user-defined benchmarks list](#the-base-cronjob-file-running-an-user-defined-benchmarks-list)
+      - [Dedicated CronJob files for benchmarks](#dedicated-cronjob-files-for-benchmarks)
   * [Permissions](#permissions)
 - [Guide](#guide)
   * [Configuration](#configuration)
@@ -88,9 +89,53 @@ The former
 1. installs the [Kubernetes](https://kubernetes.io/) command-line tool `kubectl`, and
 1. downloads [this repository](https://github.com/marcomicera/distributed-k8s), which also contains the previously-mentioned [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) as a git submodule.
 
-### The [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml)
+### [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) files and their structure
+[Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) is a tool included in `kubectl` that allows users to customize [Kubernetes](https://kubernetes.io/) objects. In this project, it is mainly used to:
+1. combine multiple objects in the right order of declaration into a single YAML file, and
+1. enable object inheritance.
 
-### Dedicated CronJob files for benchmarks
+Objects combination is particularly useful when creating the [base CronJob file that runs an user-defined list of benchmarks](#the-base-cronjob-file-running-an-user-defined-benchmarks-list), while inheritance makes it possible to create [dedicated CronJob files for single benchmarks](#dedicated-cronjob-files-for-benchmarks), making it simpler for the user to launch single benchmarks.
+
+#### The [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml) running an user-defined benchmarks list
+[Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) needs a [kustomization](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#kustomization) file as a starting point.
+The [base `kustomization.yaml` file](../yaml/base/kustomization.yaml) simply lists all the [Kubernetes](https://kubernetes.io/) objects needed to launch [`dk8s`](https://github.com/marcomicera/distributed-k8s):
+
+```yaml
+resources:
+  - dk8s-conf.yaml # benchmarks list, pushgateway address
+  - dk8s-role.yaml # PerfKit Benchmarker permissions
+  - dk8s-role-binding.yaml # associating Role to ServiceAccount
+  - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
+```
+
+All these files can be combined together and applied with a single command:
+
+```bash
+$ kubectl kustomize yaml/base | kubectl apply -f -
+```
+
+Before launching this command, [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as describe in the [Guide section](#guide).
+
+#### Dedicated CronJob files for benchmarks
+When launching single benchmarks, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) can be used to override some [Kubernetes](https://kubernetes.io/) object fields of the [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml).
+Looking at a benchmark-specific [kustomization](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#kustomization) file is enough to determine which fields are actually overridden.
+The following [`kustomization.yaml`](../yaml/benchmarks/fio/kustomization.yaml) file depicts all changes needed to run the [fio](../yaml/benchmarks/fio) benchmark:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+nameSuffix: -fio
+patchesStrategicMerge:
+  - benchmarks-list.yaml
+  - schedule.yaml
+```
+
+This file inherits all [Kubernetes](https://kubernetes.io/) objects of the [base `kustomization.yaml` file](../yaml/base/kustomization.yaml), and:
+- adds a metadata-name suffix to all its [Kubernetes](https://kubernetes.io/) objects (i.e., `-fio`),
+- defines the list of benchmarks to be executed (a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) in [`yaml/benchmarks/fio/benchmarks-list.yaml`](../yaml/benchmarks/fio/benchmarks-list.yaml) containing only `fio` in the list) and,
+- overrides the frequency with which this benchmark is run (based on its average completion time).
 
 <!-- FIXME 
 ## Passing files to containers
