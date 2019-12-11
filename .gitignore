@@ -1,5 +1,5 @@
 # Sensitive
-docker
+docker/dk8s-cronjob/Dockerfile
 kubeconfig
 
 # Misc
