@@ -138,6 +138,25 @@ This file inherits all [Kubernetes](https://kubernetes.io/) objects of the [base
 - defines the list of benchmarks to be executed (a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) in [`yaml/benchmarks/fio/benchmarks-list.yaml`](../yaml/benchmarks/fio/benchmarks-list.yaml) containing only `fio` in the list) and,
 - overrides the frequency with which this benchmark is run (based on its average completion time).
 
+The [`nameSuffix`](https://kubectl.docs.kubernetes.io/pages/reference/kustomize.html#namesuffix) field causes all resources to have this suffix prepended to their name, hence each benchmark will run in a dedicated [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) whose name contains the benchmark one.
+
+It is worth noticing that since every benchmark's [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) folder (e.g., [`yaml/benchmarks/fio`](../yaml/benchmarks/fio)) contains its own [`schedule.yaml` file](../yaml/benchmarks/fio/schedule.yaml), every benchmark will be launched at different frequencies.
+Benchmarks already have pre-determined frequency values based on their average completion time (i.e., the longer they take to complete, the less frequent their corresponding [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) will be launched), but this can be overridden by simply editing their `schedule.yaml` file **before launching**.
+Here is an example of [`schedule.yaml` file (for the fio benchmark)](../yaml/benchmarks/fio/schedule.yaml):
+
+```yaml
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: dk8s-pkb
+spec:
+  schedule: '0 */4 * * *'
+status: {}
+```
+
+According to the [Cron](https://en.wikipedia.org/wiki/Cron) format, fio will be launched every 4 hours.
+Modifying such files while a benchmark is running in a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) will not cause any change.
+
 ## Permissions
 In the following [Guide section](#guide), the user is asked to run the [`dk8s-create-sa.sh`](../dk8s-create-sa.sh) script before launching [`dk8s`](https://github.com/marcomicera/distributed-k8s).
 It is based on an [external gist imported as a `git` submodule](https://gist.github.com/marcomicera/ba340e9478e1c0c716313971cc3e2e95/3d62b107b41706dbf422a7ac62c01ea4d22ead9b).
