@@ -12,12 +12,17 @@
       - [The base CronJob file running an user-defined benchmarks list](#the-base-cronjob-file-running-an-user-defined-benchmarks-list)
       - [Dedicated CronJob files for benchmarks](#dedicated-cronjob-files-for-benchmarks)
   * [Permissions](#permissions)
-- [Guide](#guide)
+- [User guide](#user-guide)
   * [Configuration](#configuration)
     + [Number of Kubernetes pods](#number-of-kubernetes-pods)
     + [CronJob frequency](#-cronjob-frequency)
     + [Benchmarks list and Pushgateway address](#benchmarks-list-and-pushgateway-address)
   * [Launching benchmarks](#launching-benchmarks)
+- [Developer guide](#developer-guide)
+  * [Customize benchmarks-dedicated CronJob files](#customize-benchmarks-dedicated-cronjob-files)
+  * [Change the Docker images to be used](#change-the-docker-images-to-be-used)
+  * [Add additional results writers](#add-additional-results-writers)
+  * [Add new benchmarks](#add-new-benchmarks)
 - [Conclusions](#conclusions)
 
 # Introduction
@@ -167,8 +172,8 @@ In short, it:
 
 When [combining base Kubernetes objects in order to launch a custom list of benchmarks](#the-base-cronjob-file-running-an-user-defined-benchmarks-list), a proper [Role and RoleBinding object](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) are included in the final YAML file, so that the previously-created [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) can be used.
 
-# Guide
-This section explains the [How to run it section](../README.md#how-to-run-it) of the [main `README.md` file](../README.md) in a more detailed manner.
+# User guide
+This section examines the [How to run it section](../README.md#how-to-run-it) of the [main `README.md` file](../README.md) in depth.
 
 ## Configuration
 This section describes all configuration steps to be made before launching benchmarks.
@@ -254,7 +259,36 @@ or sequentially, after [having updated the list of benchmarks to run](#benchmark
 $ kubectl kustomize yaml/base | kubectl apply -f -
 ```
 
+# Developer guide
+This brief guide is addressed to developers aiming to extend this repository.
+
+## Customize [benchmarks-dedicated CronJob files](#dedicated-cronjob-files-for-benchmarks)
+Every benchmark has a dedicated YAML folder under [`yaml/benchmarks`](../yaml/benchmarks).
+It is sufficient to edit whatever file under its folder without the need of applying anything immediately: [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) will automatically merge and apply all the YAML specified by command line files upong launching [benchmarks-dedicated CronJob files](#dedicated-cronjob-files-for-benchmarks).
+
+## Change the Docker images to be used
+As described in the [Docker images section](#docker-images), there are currentl two Docker images being used:
+> A [Kubernetes](https://kubernetes.io/) [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) launches periodic jobs in Docker containers.
+The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
+[`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), respectively.
+
+The first ([`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob)) is defined in the [base CronJob file `yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml).
+
+The second image ([`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb)) is defined in the `PKB_IMAGE` variable of the [PKB's starting script `scripts/pkb/start.sh`](https://github.com/marcomicera/distributed-k8s/blob/master/scripts/pkb/start.sh).
+Since the second must be launched by the former, one must build and upload the ([`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob)) image with its [build and upload script](../docker/dk8s-cronjob/build_and_upload.sh) upon changing the name of the image launched by [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) ([`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb)).
+
+All Dockerfiles can be found in the [`docker`](../docker) folder.
+
+## Add additional results writers
+[PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) can be easily extended with additional results writers.
+It is enough to add a `SamplePublisher` child class in [`perfkitbenchmarker/publisher.py`](https://github.com/marcomicera/PerfKitBenchmarker/blob/master/perfkitbenchmarker/publisher.py) and add it to the list of publishers (`SampleCollector`'s class method `_PublishersFromFlags()`).\
+Results publishers must be enabled by means of flags, which are declared at the beginning of that very same file.
+[PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) is finally launched by the [PKB's starting script](https://github.com/marcomicera/distributed-k8s/blob/master/scripts/pkb/start.sh), which holds a `PKB_FLAGS` variable containing all the flags to be passed to [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker).
+
+## Add new benchmarks
+New benchmarks must be integrated in [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker): guidelines on how to do so are available in its [`CONTRIBUTING.md` file](https://github.com/marcomicera/PerfKitBenchmarker/blob/master/CONTRIBUTING.md).
+
 # Conclusions
 [`dk8s`](https://github.com/marcomicera/distributed-k8s) is able to [periodically](#running-benchmarks-periodically) run [various kinds](#supported-benchmarks) of benchmarks on a [Kubernetes](https://kubernetes.io/) cluster.
-The custom [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork (more details [here](#-perfkit-benchmarker-fork-changes)) includes [physical node identifiers into benchmark results](#including-node-ids-in-benchmark-results) and gradually exposes them to a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) following the [OpenMetrics](https://openmetrics.io/) format.
+The [current PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) fork (more details [here](#-perfkit-benchmarker-fork-changes)) includes [physical node identifiers into benchmark results](#including-node-ids-in-benchmark-results) and gradually exposes them to a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) following the [OpenMetrics](https://openmetrics.io/) format.
 The tool is configurable through a few handy [configuration files](#configuration).
