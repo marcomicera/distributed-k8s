@@ -17,6 +17,7 @@
     + [Number of Kubernetes pods](#number-of-kubernetes-pods)
     + [CronJob frequency](#-cronjob-frequency)
     + [Benchmarks list and Pushgateway address](#benchmarks-list-and-pushgateway-address)
+  * [Creating a ServiceAccount](#creating-a-serviceaccount)
   * [Launching benchmarks](#launching-benchmarks)
 - [Developer guide](#developer-guide)
   * [Customize benchmarks-dedicated CronJob files](#customize-benchmarks-dedicated-cronjob-files)
@@ -245,6 +246,14 @@ Experiments can be chosen amongst this list:
 - `redis`
 
 This [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) will be automatically applied/updated by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/).
+
+## Creating a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
+> In the following [Guide section](#guide), the user is asked to run the [`dk8s-create-sa.sh`](../dk8s-create-sa.sh) script before launching [`dk8s`](https://github.com/marcomicera/distributed-k8s).
+```bash
+$ ./dk8s-create-sa.sh
+```
+For more info, please have a look at the ["Permissions" section](#permissions).
+
 
 ## Launching benchmarks
 Benchmarks can be either launched singularly with (e.g., for [iperf](https://github.com/esnet/iperf)):
