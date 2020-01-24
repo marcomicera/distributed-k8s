@@ -4,7 +4,7 @@
 - [Existing work](#existing-work)
 - [Implementation](#implementation)
   * [Supported benchmarks](#supported-benchmarks)
-  * [PerfKit Benchmarker fork changes](#-perfkit-benchmarker-fork-changes)
+  * [PerfKit Benchmarker fork changes](#perfkit-benchmarker-fork-changes)
     + [Including node IDs in benchmark results](#including-node-ids-in-benchmark-results)
   * [Running benchmarks periodically](#running-benchmarks-periodically)
     + [Docker images](#docker-images)
@@ -55,8 +55,8 @@ There are four main categories of [PerfKit Benchmarker](https://github.com/Googl
 - networking-oriented (e.g., [iperf](https://github.com/esnet/iperf) and [netperf](https://hewlettpackard.github.io/netperf/)), and
 - resource manager-oriented (e.g., measuring VM placement latency and boot time).
 
-## [PerfKit Benchmarker fork](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) changes
-Besides minor bug fixes, the current [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
+## [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) changes
+Besides minor bug fixes, the current [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
 More specifically, it now includes a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) exporter, which exposes results according to the [OpenMetrics](https://openmetrics.io/) format.
 The [official Prometheus Python client](https://github.com/prometheus/client_python) has been used to implement this result writer.
 Furthermore, the CSV writer can now write results in "append" mode, allowing it to gradually add entries to the same CSV file as soon as benchmarks finish.
