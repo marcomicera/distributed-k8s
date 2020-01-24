@@ -46,7 +46,7 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
 ### Advanced usage
 
 <details>
-<summary>Launch more benchmarks sequentially</summary>
+<summary>Launch more benchmarks programmatically</summary>
 <br>
 
 1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)

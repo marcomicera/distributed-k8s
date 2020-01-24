@@ -264,7 +264,7 @@ Benchmarks can be either launched singularly with (e.g., for [iperf](https://git
 $ kubectl kustomize yaml/benchmarks/iperf | kubectl apply -f -
 ```
 
-or sequentially, after [having updated the list of benchmarks to run](#benchmarks-list-and-pushgateway-address):
+or programmatically, after [having updated the list of benchmarks to run](#benchmarks-list-and-pushgateway-address):
 
 ```bash
 $ kubectl kustomize yaml/base | kubectl apply -f -
