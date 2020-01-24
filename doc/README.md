@@ -24,6 +24,7 @@
   * [Change the Docker images to be used](#change-the-docker-images-to-be-used)
   * [Add additional results writers](#add-additional-results-writers)
   * [Add new benchmarks](#add-new-benchmarks)
+  * [Run benchmarks locally](#run-benchmarks-locally)
 - [Conclusions](#conclusions)
 
 # Introduction
@@ -298,6 +299,43 @@ Results publishers must be enabled by means of flags, which are declared at the 
 
 ## Add new benchmarks
 New benchmarks must be integrated in [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker): guidelines on how to do so are available in its [`CONTRIBUTING.md` file](https://github.com/marcomicera/PerfKitBenchmarker/blob/master/CONTRIBUTING.md).
+
+## Run benchmarks locally
+
+1. Start [`minikube`](https://github.com/kubernetes/minikube) on your local machine:
+    ```bash
+    $ minikube start
+    ```
+1. Add the current user to the `docker` group:
+    ```bash
+    $ newgrp docker
+    ```
+
+1.  To use a local Docker image:
+    1. Run a [local Docker registry](https://docs.docker.com/registry/deploying/):
+        ```bash
+        $ docker run -d -p 5000:5000 --restart=always --name registry registry:2
+        ```
+    2. Build the Docker image:
+        ```bash
+        $ docker build -t dk8s-pkb docker/dk8s-pkb/ && docker tag dk8s-pkb:latest marcomicera/dk8s-pkb
+        ```
+
+1. [Run it](../README.md#how-to-run-it)
+
+When you're done:
+1. Stop the local Docker registry:
+    ```bash
+    $ docker container stop registry
+    ```
+1. Remove its container:
+    ```bash
+    $ docker container rm -v registry
+    ```
+1. Stop [`minikube`](https://github.com/kubernetes/minikube);
+    ```bash
+    $ minikube stop
+    ```
 
 # Conclusions
 [`dk8s`](https://github.com/marcomicera/distributed-k8s) is able to [periodically](#running-benchmarks-periodically) run [various kinds](#supported-benchmarks) of benchmarks on a [Kubernetes](https://kubernetes.io/) cluster.

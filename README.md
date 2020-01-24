@@ -43,11 +43,7 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
     $ kubectl kustomize yaml/benchmarks/iperf | kubectl apply -f -
     ```
 
-### Advanced usage
-
-<details>
-<summary>Launch more benchmarks programmatically</summary>
-<br>
+### Launch more benchmarks programmatically
 
 1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
 1. Set the frequency with which benchmarks will be run in [`yaml/base/dk8s-pkb-cronjob.yaml`](yaml/base/dk8s-pkb-cronjob.yaml)
@@ -58,48 +54,6 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
     ```bash
     $ kubectl kustomize yaml/base | kubectl apply -f -
     ```
-
-</details>
-
-<details>
-<summary>Preliminary steps to run benchmarks locally</summary>
-<br>
-
-1. Start [`minikube`](https://github.com/kubernetes/minikube) on your local machine:
-    ```bash
-    $ minikube start
-    ```
-1. Add the current user to the `docker` group:
-    ```bash
-    $ newgrp docker
-    ```
-
-1.  To use a local Docker image:
-    1. Run a [local Docker registry](https://docs.docker.com/registry/deploying/):
-        ```bash
-        $ docker run -d -p 5000:5000 --restart=always --name registry registry:2
-        ```
-    2. Build the Docker image:
-        ```bash
-        $ docker build -t dk8s-pkb docker/dk8s-pkb/ && docker tag dk8s-pkb:latest marcomicera/dk8s-pkb
-        ```
-
-1. [Run it](#how-to-run-it)
-
-When you're done:
-1. Stop the local Docker registry:
-    ```bash
-    $ docker container stop registry
-    ```
-1. Remove its container:
-    ```bash
-    $ docker container rm -v registry
-    ```
-1. Stop [`minikube`](https://github.com/kubernetes/minikube);
-    ```bash
-    $ minikube stop
-    ```
-</details>
 
 # Documentation
 Check [`doc/README.md`](doc/README.md) for the complete documentation.
