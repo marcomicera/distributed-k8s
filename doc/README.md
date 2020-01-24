@@ -235,15 +235,17 @@ metadata:
 
 Experiments can be chosen amongst this list:
 - `block_storage_workload`
-- `cassandra_ycsb`
-- `cassandra_stress`
 - `cluster_boot`
 - `fio`
 - `iperf`
 - `mesh_network`
-- `mongodb_ycsb`
 - `netperf`
+<!--
+- `cassandra_ycsb`
+- `cassandra_stress`
+- `mongodb_ycsb`
 - `redis`
+-->
 
 This [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) will be automatically applied/updated by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/).
 
