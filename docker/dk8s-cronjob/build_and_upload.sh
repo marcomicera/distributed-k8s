@@ -1,3 +1,10 @@
 #!/bin/bash
 
-docker build -t dk8s-cronjob docker/dk8s-cronjob/ && docker tag dk8s-cronjob:latest marcomicera/dk8s-cronjob && docker push marcomicera/dk8s-cronjob
+#
+# Build and pushes this Dockerfile
+#
+
+# Tag
+TAG=${1:-latest}
+
+docker build docker/dk8s-cronjob/ -t marcomicera/dk8s-cronjob:$TAG && docker push marcomicera/dk8s-cronjob:$TAG

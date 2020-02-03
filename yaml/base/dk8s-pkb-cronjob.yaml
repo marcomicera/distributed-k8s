@@ -8,11 +8,12 @@ spec:
     spec:
       template:
         spec:
+          restartPolicy: Never
           containers:
           - args:
             - /bin/sh
             - -c
-            - scripts/pkb/start.sh $BENCHMARKS_TO_RUN; /bin/sh
+            - cd distributed-k8s && scripts/pkb/start.sh $BENCHMARKS_TO_RUN; /bin/sh
             env:
             - name: PUSHGATEWAY
               valueFrom:
@@ -24,10 +25,12 @@ spec:
                 configMapKeyRef:
                   name: dk8s-conf
                   key: benchmarks
-            image: marcomicera/dk8s-cronjob:latest
+            image: marcomicera/dk8s-cronjob:git-sync
             name: dk8s-pkb
             resources: {}
             volumeMounts:
+            - name: dk8s-root
+              mountPath: /home/root
             - mountPath: /home/root/distributed-k8s/.config/dk8s-kubeconfig
               name: dk8s-kubeconfig
               readOnly: true
@@ -36,9 +39,51 @@ spec:
               name: dk8s-num-pods
               readOnly: true
               subPath: dk8s-num-pods.yaml
-          restartPolicy: Never
+          initContainers:
+          - name: git-sync
+            image: k8s.gcr.io/git-sync:v3.1.5
+            env:
+            - name: GIT_SYNC_SSH
+              value: "1"
+            - name: GIT_SSH_KEY_FILE
+              value: /etc/dk8s-git-secret/ssh
+            - name: GIT_KNOWN_HOSTS
+              value: "1"
+            - name: GIT_SSH_KNOWN_HOSTS_FILE
+              value: /etc/dk8s-git-secret/known_hosts
+            - name: GIT_SYNC_REPO
+              value: git@github.com:marcomicera/distributed-k8s.git
+            - name: GIT_SYNC_ROOT
+              value: /home/root
+            - name: GIT_SYNC_DEST
+              value: distributed-k8s
+            - name: GIT_SYNC_BRANCH
+              value: git-sync
+            - name: GIT_SYNC_ONE_TIME # exit after the initial checkout
+              value: "1"
+            volumeMounts:
+            - name: dk8s-root
+              mountPath: /home/root
+            - name: dk8s-git-secret
+              mountPath: /etc/dk8s-git-secret
+              readOnly: true
+            securityContext:
+              runAsUser: 65533 # git-sync user
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["all"]
+            imagePullPolicy: Always
+          securityContext:
+            fsGroup: 65533 # to make SSH key readable
           serviceAccountName: dk8s
           volumes:
+          - name: dk8s-root
+            emptyDir: {}
+          - name: dk8s-git-secret
+            secret:
+              secretName: dk8s-git-creds
+              defaultMode: 0400
           - name: dk8s-kubeconfig
             secret:
               secretName: dk8s-kubeconfig

@@ -1,3 +1,10 @@
 #!/bin/bash
 
-docker build -t dk8s-pkb docker/dk8s-pkb/ && docker tag dk8s-pkb:latest marcomicera/dk8s-pkb && docker push marcomicera/dk8s-pkb
+#
+# Build and pushes this Dockerfile
+#
+
+# Tag
+TAG=${1:-latest}
+
+docker build docker/dk8s-pkb/ -t marcomicera/dk8s-pkb:$TAG && docker push marcomicera/dk8s-pkb:$TAG

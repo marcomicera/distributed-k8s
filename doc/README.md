@@ -10,6 +10,7 @@
     + [Docker images](#docker-images)
     + [CronJob files and their structure](#cronjob-files-and-their-structure)
       - [The base CronJob file running an user-defined benchmarks list](#the-base-cronjob-file-running-an-user-defined-benchmarks-list)
+        * [Repo cloner InitContainer](#repo-cloner-initcontainer)
       - [Dedicated CronJob files for benchmarks](#dedicated-cronjob-files-for-benchmarks)
   * [Permissions](#permissions)
 - [User guide](#user-guide)
@@ -74,23 +75,21 @@ To do this, the [Kubernetes](https://kubernetes.io/) _[Downward API](https://kub
 }]
 ```
 
-This way, each [Kubernetes](https://kubernetes.io/) pod can retrieve the node ID of the physical machine on which it is running, and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) can successfully include this information in the results.
+This way, each [Kubernetes](https://kubernetes.io/) pod can retrieve the node ID of the physical machine on which it is running, and [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) can successfully include this information in the results.
 
 ## Running benchmarks periodically
 Benchmarks are run periodically as a [Kubernetes](https://kubernetes.io/) _[CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)_.
 It periodically executes a shell script ([`scripts/pkb/start.sh`](../scripts/pkb/start.sh)) that cycles through all the benchmarks to be executed and, for each one of them, it
 1. checks whether it is compatible with [Kubernetes](https://kubernetes.io/), and
-1. builds a proper argument list to be passed to [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
+1. builds a proper argument list to be passed to [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker).
 
 ### Docker images
 A [Kubernetes](https://kubernetes.io/) [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) launches periodic jobs in Docker containers.
-The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
-[`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker), respectively.
-The latter takes care of resolving most of the dependencies needed by benchmarks so that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) will not waste any other time doing so.
+The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
+[`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker), respectively.
 
-Instead, the former:
-1. installs the [Kubernetes](https://kubernetes.io/) command-line tool `kubectl`, and
-1. downloads [this repository](https://github.com/marcomicera/distributed-k8s), which also contains the previously-mentioned [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) as a `git` submodule.
+- The former launches [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) via the [`scripts/pkb/start.sh`](../scripts/pkb/start.sh) script (more info [here](#running-benchmarks-periodically)).
+- The latter takes care of resolving most of the dependencies needed by benchmarks so that [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) will not waste any other time doing so.
 
 ### [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) files and their structure
 [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) is a tool included in `kubectl` that allows users to customize [Kubernetes](https://kubernetes.io/) objects. In this project, it is mainly used to:
@@ -109,6 +108,7 @@ resources:
   - dk8s-role.yaml # PerfKit Benchmarker permissions
   - dk8s-role-binding.yaml # associating Role to ServiceAccount
   - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
+  - dk8s-git-creds.yaml # Git credentials for downloading private repo
 ```
 
 All these files can be combined together and applied with a single command:
@@ -118,6 +118,10 @@ $ kubectl kustomize yaml/base | kubectl apply -f -
 ```
 
 Before launching this command, [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as described in the [Guide section](#guide).
+
+##### Repo cloner [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+An [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) takes care of cloning this repository first.
+If this repository is private, then it needs Git credentials mounted as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret): please take a look at the [corresponding developer guide section](../CONTRIBUTING.md#git-credentials-secret-for-private-repository) to learn more.
 
 #### Dedicated CronJob files for benchmarks
 When launching single benchmarks, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) can be used to override some [Kubernetes](https://kubernetes.io/) object fields of the [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml).

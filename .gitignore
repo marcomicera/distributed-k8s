@@ -1,5 +1,5 @@
 # Sensitive
-docker/dk8s-cronjob/Dockerfile
+yaml/base/dk8s-git-creds.yaml
 kubeconfig
 
 # Misc
