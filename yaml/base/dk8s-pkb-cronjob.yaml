@@ -42,8 +42,6 @@ spec:
           initContainers:
           - name: git-sync
             image: k8s.gcr.io/git-sync:v3.1.5
-            # command: ["cat"]
-            # args: ["/etc/dk8s-git-secret/ssh"]
             env:
             - name: GIT_SYNC_SSH
               value: "1"
