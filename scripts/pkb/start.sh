@@ -71,14 +71,6 @@ if [ "$VERBOSE" = true ] ; then
   done
 fi
 
-# Updating package lists
-echo Running \'sudo apt-get update\'...
-sudo apt-get update
-
-# Python 2.7 is required by PerfKitBenchmarker
-echo Running \'sudo apt-get install python python-pip -y\'...
-sudo apt-get install python python-pip -y
-
 # Installing PerfKitBenchmarker dependencies
 echo Installing PerfKitBenchmarker dependencies...
 PKB_FOLDER=pkb
