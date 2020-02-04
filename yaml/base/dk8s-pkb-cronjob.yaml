@@ -54,7 +54,7 @@ spec:
             - name: GIT_SYNC_DEST
               value: distributed-k8s
             - name: GIT_SYNC_BRANCH
-              value: auto-sa
+              value: master
             - name: GIT_SYNC_ONE_TIME # exit after the initial checkout
               value: "1"
             volumeMounts:
