@@ -33,10 +33,6 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
     ```bash
     $ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
     ``` 
-1. Create a dedicated [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/):
-    ```bash
-    $ ./dk8s-create-sa.sh
-    ```
 1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
 1. Launch a benchmark periodically. E.g., for `iperf`:
     ```bash

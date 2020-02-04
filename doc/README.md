@@ -109,6 +109,7 @@ resources:
   - dk8s-role-binding.yaml # associating Role to ServiceAccount
   - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
   - dk8s-git-creds.yaml # Git credentials for downloading private repo
+  - dk8s-sa.yaml # ServiceAccount
 ```
 
 All these files can be combined together and applied with a single command:
@@ -164,14 +165,8 @@ According to the [Cron](https://en.wikipedia.org/wiki/Cron) format, fio will be 
 Modifying such files while a benchmark is running in a [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) will not cause any change.
 
 ## Permissions
-In the following [Guide section](#guide), the user is asked to run the [`dk8s-create-sa.sh`](../dk8s-create-sa.sh) script before launching [`dk8s`](https://github.com/marcomicera/distributed-k8s).
-It is based on an [external gist imported as a `git` submodule](https://gist.github.com/marcomicera/ba340e9478e1c0c716313971cc3e2e95/3d62b107b41706dbf422a7ac62c01ea4d22ead9b).
-In short, it:
-1. creates a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) in the current namespace,
-1. creates a corresponding [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file and,
-1. creates a secret from it.
-
-When [combining base Kubernetes objects in order to launch a custom list of benchmarks](#the-base-cronjob-file-running-an-user-defined-benchmarks-list), a proper [Role and RoleBinding object](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) are included in the final YAML file, so that the previously-created [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) can be used.
+Upon launching a benchmark, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) uses the [base `kustomization.yaml` file](../yaml/base/kustomization.yaml) (as described [here](#the-base-cronjob-file-running-an-user-defined-benchmarks-list)) to assemble together various [Kubernetes](https://kubernetes.io/) objects.
+Between these objects, there are a couple ones used for [_Role-based access control_](https://kubernetes.io/docs/reference/access-authn-authz/rbac/), such as a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) [`yaml/base/dk8s-sa.yaml`](../yaml/base/dk8s-sa.yaml), a [Role](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) [`yaml/base/dk8s-role.yaml`](../yaml/base/dk8s-role.yaml) and a [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) object [`yaml/base/dk8s-role-binding.yaml`](../yaml/base/dk8s-role-binding.yaml).
 
 # User guide
 This section examines the [How to run it section](../README.md#how-to-run-it) of the [main `README.md` file](../README.md) in depth.
@@ -248,14 +243,6 @@ Experiments can be chosen amongst this list:
 -->
 
 This [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) will be automatically applied/updated by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/).
-
-## Creating a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
-> In the following [Guide section](#guide), the user is asked to run the [`dk8s-create-sa.sh`](../dk8s-create-sa.sh) script before launching [`dk8s`](https://github.com/marcomicera/distributed-k8s).
-```bash
-$ ./dk8s-create-sa.sh
-```
-For more info, please have a look at the ["Permissions" section](#permissions).
-
 
 ## Launching benchmarks
 Benchmarks can be either launched singularly with (e.g., for [iperf](https://github.com/esnet/iperf)):

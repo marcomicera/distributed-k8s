@@ -31,10 +31,6 @@ spec:
             volumeMounts:
             - name: dk8s-root
               mountPath: /home/root
-            - mountPath: /home/root/distributed-k8s/.config/dk8s-kubeconfig
-              name: dk8s-kubeconfig
-              readOnly: true
-              subPath: dk8s-kubeconfig
             - mountPath: /home/root/distributed-k8s/dk8s-num-pods.yaml
               name: dk8s-num-pods
               readOnly: true
@@ -58,7 +54,7 @@ spec:
             - name: GIT_SYNC_DEST
               value: distributed-k8s
             - name: GIT_SYNC_BRANCH
-              value: git-sync
+              value: auto-sa
             - name: GIT_SYNC_ONE_TIME # exit after the initial checkout
               value: "1"
             volumeMounts:
@@ -84,9 +80,6 @@ spec:
             secret:
               secretName: dk8s-git-creds
               defaultMode: 0400
-          - name: dk8s-kubeconfig
-            secret:
-              secretName: dk8s-kubeconfig
           - name: dk8s-num-pods
             configMap:
               name: dk8s-num-pods
