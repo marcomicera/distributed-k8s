@@ -4,6 +4,3 @@
 [submodule "PerfKit Benchmarker"]
 	path = pkb
 	url = git@github.com:marcomicera/PerfKitBenchmarker.git
-[submodule "kubeconfig creator"]
-	path = scripts/kubernetes/auth
-	url = git@gist.github.com:ba340e9478e1c0c716313971cc3e2e95.git

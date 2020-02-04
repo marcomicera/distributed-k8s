@@ -26,8 +26,17 @@ VERBOSE=false
 # Base directory of this repository
 BASEDIR=.
 
+# Creating kubeconfig file (~/.kube/config)
+kubectl config set clusters.my-cluster.server https://10.96.0.1
+kubectl config set clusters.my-cluster.certificate-authority-data $(cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt | base64 -w0)
+kubectl config set-cluster my-cluster --namespace=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+kubectl config set users.cluster-admin.token  $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+kubectl config set contexts.test.cluster my-cluster
+kubectl config set contexts.test.namespace $(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+kubectl config set contexts.test.user cluster-admin
+
+
 # Benchmarks config
-KUBECONFIG=$BASEDIR/.config/dk8s-kubeconfig
 THREADS=4
 PKB_IMAGE=marcomicera/dk8s-pkb:latest
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
@@ -36,7 +45,7 @@ CSV_RESULTS=$RESULTS_DIR/results.csv
 PUSHGATEWAY=$PUSHGATEWAY
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a\ --pushgateway\ $PUSHGATEWAY
 BENCHMARKS_CONFIG_FILE=$BASEDIR/dk8s-num-pods.yaml
-KUBERNETES_FLAGS=--kubectl=$(command -v kubectl)\ --kubeconfig=$KUBECONFIG\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
+KUBERNETES_FLAGS=--kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 
 # Check whether to run all benchmarks or not
 BENCHMARKS_TO_RUN=()
