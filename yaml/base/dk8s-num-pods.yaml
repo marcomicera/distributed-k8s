@@ -1,0 +1,76 @@
+kind: ConfigMap
+metadata:
+  name: dk8s-num-pods
+apiVersion: v1
+data:
+  dk8s-num-pods.yaml: |
+    flags:
+      cloud: Kubernetes
+      kubernetes_anti_affinity: false
+
+    block_storage_workload:
+      description: >
+        Runs FIO in sequential, random, read and
+        write modes to simulate various scenarios.
+      vm_groups:
+        default:
+          vm_count: 1
+
+    cassandra_ycsb:
+      description: Run YCSB against Cassandra.
+      vm_groups:
+        workers:
+          vm_count: 1
+        clients:
+          vm_count: 1
+
+    cassandra_stress:
+      description: Benchmark Cassandra using cassandra-stress
+      vm_groups:
+        workers:
+          vm_count: 1
+        client:
+          vm_count: 1
+
+    cluster_boot:
+      description: Create a cluster, record all times to boot.
+      vm_groups:
+        default:
+          vm_count: 4
+
+    fio: # cannot set vm_count
+      description: >
+        Runs fio in sequential, random, read and write modes.
+
+    iperf:
+      description: Run iperf
+      vm_groups:
+        vm_1:
+          vm_count: 1 # cannot be changed
+        vm_2:
+          vm_count: 1 # cannot be changed
+
+    mesh_network:
+      description: >
+        Measures VM to VM cross section bandwidth in
+        a mesh network.
+      vm_groups:
+        default:
+          vm_count: 5 # FIXME does not work
+
+    mongodb_ycsb:
+      description: Run YCSB against a single MongoDB node.
+      vm_groups:
+        workers:
+          vm_count: 1
+        clients:
+          vm_count: 1
+
+    netperf: # vm_count is 2 and it cannot be changed
+      description: Run TCP_RR, TCP_CRR, UDP_RR and TCP_STREAM
+
+    redis:
+      description: Run YCSB against a single Redis server.
+      vm_groups:
+        clients:
+          vm_count: 7 # FIXME does not work

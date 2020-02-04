@@ -110,6 +110,7 @@ resources:
   - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
   - dk8s-git-creds.yaml # Git credentials for downloading private repo
   - dk8s-sa.yaml # ServiceAccount
+  - dk8s-num-pods.yaml # number of pods to be used for each benchmark
 ```
 
 All these files can be combined together and applied with a single command:
@@ -118,7 +119,7 @@ All these files can be combined together and applied with a single command:
 $ kubectl kustomize yaml/base | kubectl apply -f -
 ```
 
-Before launching this command, [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as described in the [Guide section](#guide).
+Before launching this command, [`yaml/base/dk8s-num-pods.yaml`](../yaml/base/dk8s-num-pods.yaml), [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml), and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as described in the [Guide section](#guide).
 
 ##### Repo cloner [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
 An [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) takes care of cloning this repository first.
@@ -175,31 +176,31 @@ This section examines the [How to run it section](../README.md#how-to-run-it) of
 This section describes all configuration steps to be made before launching benchmarks.
 
 ### Number of [Kubernetes](https://kubernetes.io/) pods
-The number of [Kubernetes](https://kubernetes.io/) pods to be used for every benchmark is defined in the [`dk8s-num-pods.yaml`](../dk8s-num-pods.yaml) configuration file. Here is an extract:
+The number of [Kubernetes](https://kubernetes.io/) pods to be used for every benchmark is defined in the [`yaml/base/dk8s-num-pods.yaml`](../yaml/base/dk8s-num-pods.yaml) [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/). Here is an extract:
 
 ```yaml
-flags:
-  cloud: Kubernetes
-  kubernetes_anti_affinity: false
+kind: ConfigMap
+metadata:
+  name: dk8s-num-pods
+apiVersion: v1
+data:
+  dk8s-num-pods.yaml: |
+    flags:
+      cloud: Kubernetes
+      kubernetes_anti_affinity: false
 
-block_storage_workload:
-  description: >
-    Runs FIO in sequential, random, read and
-    write modes to simulate various scenarios.
-  vm_groups:
-    default:
-      vm_count: 1
+    block_storage_workload:
+      description: >
+        Runs FIO in sequential, random, read and
+        write modes to simulate various scenarios.
+      vm_groups:
+        default:
+          vm_count: 1
 ```
 
 It is worth noticing that [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) uses the term _VM_ as a generalization of _[Kubernetes](https://kubernetes.io/) pod_ since it supports multiple cloud providers.
 
-Finally, the user needs to create a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) from this file.
-
-```bash
-$ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
-```
-
-This will then be mounted as a file in the container running [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker).
+This [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) will be then applied by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) upon launching a benchmark, and it will then be mounted as a file in the container running [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker).
 
 ### [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency
 Next, the general [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency can be adjusted in the [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) file:

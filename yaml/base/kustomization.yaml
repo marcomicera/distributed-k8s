@@ -5,3 +5,4 @@ resources:
   - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
   - dk8s-git-creds.yaml # Git credentials for downloading private repo
   - dk8s-sa.yaml # ServiceAccount
+  - dk8s-num-pods.yaml # number of pods to be used for each benchmark

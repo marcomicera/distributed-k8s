@@ -29,10 +29,7 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
    $ cd distributed-k8s
    $ git submodule update --init --recursive
    ```
-1. Set the number of pods to be used for each benchmark in the [`dk8s-num-pods.yaml`](dk8s-num-pods.yaml) file and apply the [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/):
-    ```bash
-    $ kubectl create cm dk8s-num-pods --from-file dk8s-num-pods.yaml -o yaml --dry-run | kubectl replace -f -
-    ``` 
+1. Set the number of pods to be used for each benchmark in the [`yaml/base/dk8s-num-pods.yaml`](yaml/base/dk8s-num-pods.yaml) file
 1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
 1. Launch a benchmark periodically. E.g., for `iperf`:
     ```bash
@@ -41,7 +38,8 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
 
 ### Launch more benchmarks programmatically
 
-1. Define the list of benchmarks to run and the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
+1. Define the list of benchmarks to run (and the [Pushgateway](https://github.com/prometheus/pushgateway) address) in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
+1. Set the number of pods to be used for each benchmark in the [`yaml/base/dk8s-num-pods.yaml`](yaml/base/dk8s-num-pods.yaml) file
 1. Set the frequency with which benchmarks will be run in [`yaml/base/dk8s-pkb-cronjob.yaml`](yaml/base/dk8s-pkb-cronjob.yaml)
     ```yaml
     schedule: '0 * * * *'
