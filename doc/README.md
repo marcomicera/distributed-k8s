@@ -48,9 +48,29 @@ This section aims to describe some system and implementation details needed to a
 ## Supported benchmarks
 There are four main categories of [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker)-supported benchmarks runnable on [Kubernetes](https://kubernetes.io/):
 - I/O-based (e.g., [fio](https://github.com/axboe/fio)),
+- networking-oriented (e.g., [iperf](https://github.com/esnet/iperf) and [netperf](https://hewlettpackard.github.io/netperf/)),
+- resource manager-oriented (e.g., measuring VM placement latency and boot time), and
 - database-oriented (e.g., [YCSB](https://github.com/brianfrankcooper/YCSB) on [Cassandra](http://cassandra.apache.org/) and [MongoDB](https://www.mongodb.com/), [memtier_benchmark](https://github.com/RedisLabs/memtier_benchmark) on [Redis](https://redis.io/)),
-- networking-oriented (e.g., [iperf](https://github.com/esnet/iperf) and [netperf](https://hewlettpackard.github.io/netperf/)), and
-- resource manager-oriented (e.g., measuring VM placement latency and boot time).
+
+
+Due to the shortage of time, benchmarks belonging to the latter group still do not run properly.
+However, the current bugs seem to be pretty trivial to solve.
+For instance, [MongoDB](https://www.mongodb.com/) does not start because of a missing release file:
+
+```
+dk8s-pkb STDERR: E: The repository 'https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/3.0 Release' does not have a Release file.
+```
+
+And [Redis](https://redis.io/) simply exceeds [Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/):
+
+```                                                                    │
+dk8s-pkb STDERR: Error from server (Forbidden): error when creating "/tmp/tmpaIV4bj": pods "pkb-77f34c4d-9" is forbidden: exceeded quota: default-quota, requested: limits.cpu=5, used: limits.cpu=50, limited: limits.cpu=54      
+```
+
+Non-running benchmarks are tracked in [issue #5](https://github.com/marcomicera/distributed-k8s/issues/5).
+
+Please note that [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) has to be extended so that benchmarks can expose additional information to the [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) (e.g., [Node](https://kubernetes.io/docs/concepts/architecture/nodes/) IDs).
+Besides tracking benchmarks that still have to be extended, [issue #21](https://github.com/marcomicera/distributed-k8s/issues/21) also lists a few previous commits that show how to do this.
 
 ## [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) changes
 Besides minor bug fixes, the current [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
