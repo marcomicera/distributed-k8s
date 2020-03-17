@@ -2,6 +2,7 @@
 <p align="center">
     <a href="https://github.com/marcomicera/distributed-k8s/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/marcomicera/distributed-k8s"></a>
     <a href="https://github.com/marcomicera/distributed-k8s/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/marcomicera/distributed-k8s"></a>
+    <img alt="GitHub tag (latest by date)" src="https://img.shields.io/github/v/tag/marcomicera/distributed-k8s?label=version">
 </p>
 
 `distributed-k8s` (a.k.a. `dk8s`) is a benchmarking tool based on Google Cloud Platform's [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) that can periodically run benchmarks as [CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) on [Kubernetes](https://kubernetes.io/).
