@@ -72,21 +72,3 @@ When you're done:
     ```bash
     $ minikube stop
     ```
-
-# Git credentials [Secret](https://kubernetes.io/docs/concepts/configuration/secret) for private repository
-The [base CronJob file](doc/README.md#the-base-cronjob-file-running-an-user-defined-benchmarks-list) has an [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) that [clones this repository before launching benchmarks](doc/README.md#repo-cloner-initcontainer).
-If this repository is private, then it needs Git credentials mounted as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret).
-
-Create the `yaml/base/dk8s-git-creds.yaml` file having the following structure:
-```yaml
-kind: Secret
-apiVersion: v1
-data:
-  known_hosts: <base64 encoded known_hosts>
-  ssh:  <base64 encoded private-key>
-metadata:
-  name: dk8s-git-creds
-```
-
-The [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) tool will then take care of creating the [Secret](https://kubernetes.io/docs/concepts/configuration/secret).
-Make sure that `dk8s-git-creds.yaml` is included in [`yaml/base/kustomization.yaml`](yaml/base/kustomization.yaml) first.
