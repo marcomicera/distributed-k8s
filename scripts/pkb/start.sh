@@ -2,24 +2,24 @@
 
 # Which benchmarks can be run on Kubernetes with PKB
 AVAILABLE_BENCHMARKS=(
-    block_storage_workload
-    cassandra_ycsb
-    cassandra_stress
-    cluster_boot
-    fio
-    iperf
-    mesh_network
-    mongodb_ycsb
-    netperf
-    redis
+  block_storage_workload
+  cassandra_ycsb
+  cassandra_stress
+  cluster_boot
+  fio
+  iperf
+  mesh_network
+  mongodb_ycsb
+  netperf
+  redis
 )
 
 # Script usage help message
-if (( $# < 1 )); then
-    printf "Usage: scripts/pkb/start.sh <benchmarks_to_run>\n\nSupported benchmarks on Kubernetes: {\n"
-    printf '\t%s\n' "${AVAILABLE_BENCHMARKS[@]}"
-    printf "}\n\nOr simply type 'all' to run all of them.\n"
-    exit 1
+if (($# < 1)); then
+  printf "Usage: scripts/pkb/start.sh <benchmarks_to_run>\n\nSupported benchmarks on Kubernetes: {\n"
+  printf '\t%s\n' "${AVAILABLE_BENCHMARKS[@]}"
+  printf "}\n\nOr simply type 'all' to run all of them.\n"
+  exit 1
 fi
 VERBOSE=false
 
@@ -30,11 +30,10 @@ BASEDIR=.
 kubectl config set clusters.my-cluster.server https://10.96.0.1
 kubectl config set clusters.my-cluster.certificate-authority-data $(cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt | base64 -w0)
 kubectl config set-cluster my-cluster --namespace=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
-kubectl config set users.cluster-admin.token  $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+kubectl config set users.cluster-admin.token $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
 kubectl config set contexts.test.cluster my-cluster
 kubectl config set contexts.test.namespace $(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 kubectl config set contexts.test.user cluster-admin
-
 
 # Benchmarks config
 THREADS=4
@@ -49,7 +48,7 @@ KUBERNETES_FLAGS=--kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCH
 
 # Check whether to run all benchmarks or not
 BENCHMARKS_TO_RUN=()
-if [ "$1" == "all" ] ; then
+if [ "$1" == "all" ]; then
   BENCHMARKS_TO_RUN=("${AVAILABLE_BENCHMARKS[@]}")
 else
   BENCHMARKS_TO_RUN=("$@")
@@ -72,7 +71,7 @@ netperf_FLAGS=
 redis_FLAGS=--config_override=redis.vm_groups.default.redis_clients=$((THREADS - 1))
 
 # Info
-if [ "$VERBOSE" = true ] ; then
+if [ "$VERBOSE" = true ]; then
   echo User wants to run the following benchmarks: "$@"
   for AVAILABLE_BENCHMARK in "${AVAILABLE_BENCHMARKS[@]}"; do
     declare "BENCHMARK_FLAGS=${AVAILABLE_BENCHMARK}_FLAGS"

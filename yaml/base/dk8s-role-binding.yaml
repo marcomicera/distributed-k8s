@@ -7,5 +7,5 @@ roleRef:
   kind: Role
   name: dk8s-role
 subjects:
-- kind: ServiceAccount
-  name: dk8s
+  - kind: ServiceAccount
+    name: dk8s
