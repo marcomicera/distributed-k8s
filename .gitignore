@@ -1,16 +1,4 @@
-# Sensitive
-yaml/base/dk8s-git-creds.yaml
-kubeconfig
-
 # Misc
-test
 .vscode
-ubuntu_ssh.*
 .idea
 venv
-
-# Results
-results/tmp
-*_keyfile*
-*.pem
-ssh_config
