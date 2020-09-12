@@ -3,4 +3,4 @@ data:
   benchmarks: mesh_network
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf

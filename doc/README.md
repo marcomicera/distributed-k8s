@@ -26,7 +26,7 @@
 # Introduction
 Running benchmarks on the cloud is not only useful to compare different providers but also to measure the differences when changing the  operating conditions of the cluster (e.g., updating the underlying physical hardware, replacing the CNI provider, adding more nodes, running different workloads in background, etc.).
 
-[`distributed-k8s`](https://github.com/marcomicera/distributed-k8s) (a.k.a. [`dk8s`](https://github.com/marcomicera/distributed-k8s)) focuses on the latter aspect, specifically on [Kubernetes](https://kubernetes.io/): it can run a large [set of benchmarks](https://github.com/marcomicera/distributed-k8s#supported-benchmarks) and expose their results to the [Prometheus](https://prometheus.io/) monitoring system.
+[`kubemarks`](https://github.com/marcomicera/kubemarks) focuses on the latter aspect, specifically on [Kubernetes](https://kubernetes.io/): it can run a large [set of benchmarks](https://github.com/marcomicera/kubemarks#supported-benchmarks) and expose their results to the [Prometheus](https://prometheus.io/) monitoring system.
 
 # Existing work
 Adapting existing benchmarks to run on [Kubernetes](https://kubernetes.io/) may not be straight-forward, especially when dealing with distributed ones that, by definition, need to involve multiple pods.
@@ -58,19 +58,19 @@ However, the current bugs seem to be pretty trivial to solve.
 For instance, [MongoDB](https://www.mongodb.com/) does not start because of a missing release file:
 
 ```
-dk8s-pkb STDERR: E: The repository 'https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/3.0 Release' does not have a Release file.
+kubemarks-pkb STDERR: E: The repository 'https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/3.0 Release' does not have a Release file.
 ```
 
 And [Redis](https://redis.io/) simply exceeds [Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/):
 
 ```                                                                    │
-dk8s-pkb STDERR: Error from server (Forbidden): error when creating "/tmp/tmpaIV4bj": pods "pkb-77f34c4d-9" is forbidden: exceeded quota: default-quota, requested: limits.cpu=5, used: limits.cpu=50, limited: limits.cpu=54      
+kubemarks-pkb STDERR: Error from server (Forbidden): error when creating "/tmp/tmpaIV4bj": pods "pkb-77f34c4d-9" is forbidden: exceeded quota: default-quota, requested: limits.cpu=5, used: limits.cpu=50, limited: limits.cpu=54      
 ```
 
-Non-running benchmarks are tracked in [issue #5](https://github.com/marcomicera/distributed-k8s/issues/5).
+Non-running benchmarks are tracked in [issue #5](https://github.com/marcomicera/kubemarks/issues/5).
 
 Please note that [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) has to be extended so that benchmarks can expose additional information to the [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) (e.g., [Node](https://kubernetes.io/docs/concepts/architecture/nodes/) IDs).
-Besides tracking benchmarks that still have to be extended, [issue #21](https://github.com/marcomicera/distributed-k8s/issues/21) also lists a few previous commits that show how to do this.
+Besides tracking benchmarks that still have to be extended, [issue #21](https://github.com/marcomicera/kubemarks/issues/21) also lists a few previous commits that show how to do this.
 
 ## [PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) changes
 Besides minor bug fixes, the current [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) fork has been extended with an additional "results writer", i.e., endpoint to which results are exported at the end of a single benchmark execution.
@@ -105,8 +105,8 @@ It periodically executes a shell script ([`scripts/pkb/start.sh`](../scripts/pkb
 
 ### Docker images
 A [Kubernetes](https://kubernetes.io/) [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) launches periodic jobs in Docker containers.
-The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
-[`marcomicera/dk8s-cronjob`](https://hub.docker.com/r/marcomicera/dk8s-cronjob) and [`marcomicera/dk8s-pkb`](https://hub.docker.com/r/marcomicera/dk8s-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker), respectively.
+The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) file of this repository [`yaml/base/kubemarks-pkb-cronjob.yaml`](../yaml/base/kubemarks-pkb-cronjob.yaml) mainly executes [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker), which in turn needs to launch benchmarks in Docker containers so that the [Kubernetes](https://kubernetes.io/) scheduler can allocate those onto pods.
+[`marcomicera/kubemarks-cronjob`](https://hub.docker.com/r/marcomicera/kubemarks-cronjob) and [`marcomicera/kubemarks-pkb`](https://hub.docker.com/r/marcomicera/kubemarks-pkb) are the Docker images launched by the [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) and [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker), respectively.
 
 - The former launches [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) via the [`scripts/pkb/start.sh`](../scripts/pkb/start.sh) script (more info [here](#running-benchmarks-periodically)).
 - The latter takes care of resolving most of the dependencies needed by benchmarks so that [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker) will not waste any other time doing so.
@@ -118,19 +118,19 @@ The base [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cro
 
 Objects combination is particularly useful when creating the [base CronJob file that runs an user-defined list of benchmarks](#the-base-cronjob-file-running-an-user-defined-benchmarks-list), while inheritance makes it possible to create [dedicated CronJob files for single benchmarks](#dedicated-cronjob-files-for-benchmarks), making it simpler for the user to launch single benchmarks.
 
-#### The [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml) running an user-defined benchmarks list
+#### The [base CronJob file](../yaml/base/kubemarks-pkb-cronjob.yaml) running an user-defined benchmarks list
 [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) needs a [kustomization](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#kustomization) file as a starting point.
-The [base `kustomization.yaml` file](../yaml/base/kustomization.yaml) simply lists all the [Kubernetes](https://kubernetes.io/) objects needed to launch [`dk8s`](https://github.com/marcomicera/distributed-k8s):
+The [base `kustomization.yaml` file](../yaml/base/kustomization.yaml) simply lists all the [Kubernetes](https://kubernetes.io/) objects needed to launch [`kubemarks`](https://github.com/marcomicera/kubemarks):
 
 ```yaml
 resources:
-  - dk8s-conf.yaml # benchmarks list, pushgateway address
-  - dk8s-role.yaml # PerfKit Benchmarker permissions
-  - dk8s-role-binding.yaml # associating Role to ServiceAccount
-  - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
-  - dk8s-git-creds.yaml # Git credentials for downloading private repo
-  - dk8s-sa.yaml # ServiceAccount
-  - dk8s-num-pods.yaml # number of pods to be used for each benchmark
+  - kubemarks-conf.yaml # benchmarks list, pushgateway address
+  - kubemarks-role.yaml # PerfKit Benchmarker permissions
+  - kubemarks-role-binding.yaml # associating Role to ServiceAccount
+  - kubemarks-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
+  - kubemarks-git-creds.yaml # Git credentials for downloading private repo
+  - kubemarks-sa.yaml # ServiceAccount
+  - kubemarks-num-pods.yaml # number of pods to be used for each benchmark
 ```
 
 All these files can be combined together and applied with a single command:
@@ -139,14 +139,14 @@ All these files can be combined together and applied with a single command:
 $ kubectl kustomize yaml/base | kubectl apply -f -
 ```
 
-Before launching this command, [`yaml/base/dk8s-num-pods.yaml`](../yaml/base/dk8s-num-pods.yaml), [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml), and [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) should be modified accordingly, as described in the [Guide section](#guide).
+Before launching this command, [`yaml/base/kubemarks-num-pods.yaml`](../yaml/base/kubemarks-num-pods.yaml), [`yaml/base/kubemarks-conf.yaml`](../yaml/base/kubemarks-conf.yaml), and [`yaml/base/kubemarks-pkb-cronjob.yaml`](../yaml/base/kubemarks-pkb-cronjob.yaml) should be modified accordingly, as described in the [Guide section](#guide).
 
 ##### Repo cloner [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
 An [InitContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) takes care of cloning this repository first.
 If this repository is private, then it needs Git credentials mounted as a [Secret](https://kubernetes.io/docs/concepts/configuration/secret): please take a look at the [corresponding developer guide section](../CONTRIBUTING.md#git-credentials-secret-for-private-repository) to learn more.
 
 #### Dedicated CronJob files for benchmarks
-When launching single benchmarks, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) can be used to override some [Kubernetes](https://kubernetes.io/) object fields of the [base CronJob file](../yaml/base/dk8s-pkb-cronjob.yaml).
+When launching single benchmarks, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) can be used to override some [Kubernetes](https://kubernetes.io/) object fields of the [base CronJob file](../yaml/base/kubemarks-pkb-cronjob.yaml).
 Looking at a benchmark-specific [kustomization](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#kustomization) file is enough to determine which fields are actually overridden.
 The following [`kustomization.yaml`](../yaml/benchmarks/fio/kustomization.yaml) file depicts all changes needed to run the [fio](../yaml/benchmarks/fio) benchmark:
 
@@ -176,7 +176,7 @@ Here is an example of [`schedule.yaml` file (for the fio benchmark)](../yaml/ben
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: dk8s-pkb
+  name: kubemarks-pkb
 spec:
   schedule: '0 */4 * * *'
 status: {}
@@ -187,7 +187,7 @@ Modifying such files while a benchmark is running in a [CronJob](https://kuberne
 
 ## Permissions
 Upon launching a benchmark, [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) uses the [base `kustomization.yaml` file](../yaml/base/kustomization.yaml) (as described [here](#the-base-cronjob-file-running-an-user-defined-benchmarks-list)) to assemble together various [Kubernetes](https://kubernetes.io/) objects.
-Between these objects, there are a couple ones used for [_Role-based access control_](https://kubernetes.io/docs/reference/access-authn-authz/rbac/), such as a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) [`yaml/base/dk8s-sa.yaml`](../yaml/base/dk8s-sa.yaml), a [Role](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) [`yaml/base/dk8s-role.yaml`](../yaml/base/dk8s-role.yaml) and a [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) object [`yaml/base/dk8s-role-binding.yaml`](../yaml/base/dk8s-role-binding.yaml).
+Between these objects, there are a couple ones used for [_Role-based access control_](https://kubernetes.io/docs/reference/access-authn-authz/rbac/), such as a [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) [`yaml/base/kubemarks-sa.yaml`](../yaml/base/kubemarks-sa.yaml), a [Role](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) [`yaml/base/kubemarks-role.yaml`](../yaml/base/kubemarks-role.yaml) and a [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) object [`yaml/base/kubemarks-role-binding.yaml`](../yaml/base/kubemarks-role-binding.yaml).
 
 # User guide
 This section examines the [How to run it section](../README.md#how-to-run-it) of the [main `README.md` file](../README.md) in depth.
@@ -196,15 +196,15 @@ This section examines the [How to run it section](../README.md#how-to-run-it) of
 This section describes all configuration steps to be made before launching benchmarks.
 
 ### Number of [Kubernetes](https://kubernetes.io/) pods
-The number of [Kubernetes](https://kubernetes.io/) pods to be used for every benchmark is defined in the [`yaml/base/dk8s-num-pods.yaml`](../yaml/base/dk8s-num-pods.yaml) [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/). Here is an extract:
+The number of [Kubernetes](https://kubernetes.io/) pods to be used for every benchmark is defined in the [`yaml/base/kubemarks-num-pods.yaml`](../yaml/base/kubemarks-num-pods.yaml) [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/). Here is an extract:
 
 ```yaml
 kind: ConfigMap
 metadata:
-  name: dk8s-num-pods
+  name: kubemarks-num-pods
 apiVersion: v1
 data:
-  dk8s-num-pods.yaml: |
+  kubemarks-num-pods.yaml: |
     flags:
       cloud: Kubernetes
       kubernetes_anti_affinity: false
@@ -223,7 +223,7 @@ It is worth noticing that [PerfKit Benchmarker](https://github.com/GoogleCloudPl
 This [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) will be then applied by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) upon launching a benchmark, and it will then be mounted as a file in the container running [PerfKit Benchmarker](https://github.com/marcomicera/PerfKitBenchmarker).
 
 ### [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency
-Next, the general [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency can be adjusted in the [`yaml/base/dk8s-pkb-cronjob.yaml`](../yaml/base/dk8s-pkb-cronjob.yaml) file:
+Next, the general [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) frequency can be adjusted in the [`yaml/base/kubemarks-pkb-cronjob.yaml`](../yaml/base/kubemarks-pkb-cronjob.yaml) file:
 
 ```yaml
 schedule: '*/30 * * * *'
@@ -233,7 +233,7 @@ The schedule follows the [Cron](https://en.wikipedia.org/wiki/Cron) format.
 There is no need to specify this for the [one-benchmark-only CronJob files](#dedicated-cronjob-files-for-benchmarks), as the frequency will be automatically set by [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/).
 
 ### Benchmarks list and [Pushgateway](https://github.com/prometheus/pushgateway) address
-The [`yaml/base/dk8s-conf.yaml`](../yaml/base/dk8s-conf.yaml) file contains two experiment options, namely
+The [`yaml/base/kubemarks-conf.yaml`](../yaml/base/kubemarks-conf.yaml) file contains two experiment options, namely
 - the [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) address, and
 - the list of benchmarks to run.
 
@@ -246,7 +246,7 @@ data:
   pushgateway: pushgateway.address.test
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf
 ```
 
 Experiments can be chosen amongst this list:
@@ -282,6 +282,6 @@ $ kubectl kustomize yaml/base | kubectl apply -f -
 Take a look at the [`CONTRIBUTING.md` file](../CONTRIBUTING.md).
 
 # Conclusions
-[`dk8s`](https://github.com/marcomicera/distributed-k8s) is able to [periodically](#running-benchmarks-periodically) run [various kinds](#supported-benchmarks) of benchmarks on a [Kubernetes](https://kubernetes.io/) cluster.
+[`kubemarks`](https://github.com/marcomicera/kubemarks) is able to [periodically](#running-benchmarks-periodically) run [various kinds](#supported-benchmarks) of benchmarks on a [Kubernetes](https://kubernetes.io/) cluster.
 The [current PerfKit Benchmarker fork](https://github.com/marcomicera/PerfKitBenchmarker) (more details [here](#perfkit-benchmarker-fork-changes)) includes [physical node identifiers into benchmark results](#including-node-ids-in-benchmark-results) and gradually exposes them to a [Prometheus](https://prometheus.io/) [Pushgateway](https://github.com/prometheus/pushgateway) following the [OpenMetrics](https://openmetrics.io/) format.
 The tool is configurable through a few handy [configuration files](#configuration).

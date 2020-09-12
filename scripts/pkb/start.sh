@@ -37,13 +37,13 @@ kubectl config set contexts.test.user cluster-admin
 
 # Benchmarks config
 THREADS=4
-PKB_IMAGE=marcomicera/dk8s-pkb:latest
+PKB_IMAGE=marcomicera/kubemarks-pkb:latest
 CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 RESULTS_DIR=$BASEDIR/results/tmp/$CURRENT_DATE
 CSV_RESULTS=$RESULTS_DIR/results.csv
 PUSHGATEWAY=$PUSHGATEWAY
 PKB_FLAGS=--max_concurrent_threads\ $THREADS\ --image\ $PKB_IMAGE\ --temp_dir\ $RESULTS_DIR\ --csv_path\ $CSV_RESULTS\ --csv_write_mode\ a\ --pushgateway\ $PUSHGATEWAY
-BENCHMARKS_CONFIG_FILE=$BASEDIR/dk8s-num-pods.yaml
+BENCHMARKS_CONFIG_FILE=$BASEDIR/kubemarks-num-pods.yaml
 KUBERNETES_FLAGS=--kubeconfig=$HOME/.kube/config\ --benchmark_config_file=$BENCHMARKS_CONFIG_FILE
 
 # Check whether to run all benchmarks or not

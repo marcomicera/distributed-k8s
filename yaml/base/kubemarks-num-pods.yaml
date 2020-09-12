@@ -1,9 +1,9 @@
 kind: ConfigMap
 metadata:
-  name: dk8s-num-pods
+  name: kubemarks-num-pods
 apiVersion: v1
 data:
-  dk8s-num-pods.yaml: |
+  kubemarks-num-pods.yaml: |
     flags:
       cloud: Kubernetes
       kubernetes_anti_affinity: false

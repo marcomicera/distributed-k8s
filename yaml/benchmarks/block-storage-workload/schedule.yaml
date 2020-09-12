@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: dk8s-pkb
+  name: kubemarks-pkb
 spec:
   schedule: '1 2 */2 * *'
 status: {}

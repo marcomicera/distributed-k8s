@@ -1,11 +1,11 @@
-# `distributed-k8s`: Kubernetes benchmarking
+# `kubemarks`: KUBErnetes benchMARKS
 <p align="center">
     <img alt="GitHub" src="https://img.shields.io/github/license/marcomicera/distributed-k8s">
-    <a href="https://github.com/marcomicera/distributed-k8s/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/marcomicera/distributed-k8s"></a>
-    <img alt="GitHub tag (latest by date)" src="https://img.shields.io/github/v/tag/marcomicera/distributed-k8s">
+    <a href="https://github.com/marcomicera/kubemarks/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/marcomicera/kubemarks"></a>
+    <img alt="GitHub tag (latest by date)" src="https://img.shields.io/github/v/tag/marcomicera/kubemarks">
 </p>
 
-`distributed-k8s` (a.k.a. `dk8s`) is a benchmarking tool based on Google Cloud Platform's [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) that can periodically run benchmarks as [CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) on [Kubernetes](https://kubernetes.io/).
+`kubemarks` is a benchmarking tool based on Google Cloud Platform's [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) that can periodically run benchmarks as [CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) on [Kubernetes](https://kubernetes.io/).
 Results can be exposed to a [Prometheus Pushgateway](https://github.com/prometheus/pushgateway).
 
 ### Supported benchmarks
@@ -30,12 +30,12 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
 
 1. Clone this repository:
     ```bash
-   $ git clone git@github.com:marcomicera/distributed-k8s.git
-   $ cd distributed-k8s
+   $ git clone git@github.com:marcomicera/kubemarks.git
+   $ cd kubemarks
    $ git submodule update --init --recursive
    ```
-1. Set the number of pods to be used for each benchmark in the [`yaml/base/dk8s-num-pods.yaml`](yaml/base/dk8s-num-pods.yaml) file
-1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
+1. Set the number of pods to be used for each benchmark in the [`yaml/base/kubemarks-num-pods.yaml`](yaml/base/kubemarks-num-pods.yaml) file
+1. Set the [Pushgateway](https://github.com/prometheus/pushgateway) address in [`yaml/base/kubemarks-conf.yaml`](yaml/base/kubemarks-conf.yaml)
 1. Launch a benchmark periodically. E.g., for `iperf`:
     ```bash
     $ kubectl kustomize yaml/benchmarks/iperf | kubectl apply -f -
@@ -43,9 +43,9 @@ Benchmarks are periodically launched as a [CronJob](https://kubernetes.io/docs/c
 
 ### Launch more benchmarks programmatically
 
-1. Define the list of benchmarks to run (and the [Pushgateway](https://github.com/prometheus/pushgateway) address) in [`yaml/base/dk8s-conf.yaml`](yaml/base/dk8s-conf.yaml)
-1. Set the number of pods to be used for each benchmark in the [`yaml/base/dk8s-num-pods.yaml`](yaml/base/dk8s-num-pods.yaml) file
-1. Set the frequency with which benchmarks will be run in [`yaml/base/dk8s-pkb-cronjob.yaml`](yaml/base/dk8s-pkb-cronjob.yaml)
+1. Define the list of benchmarks to run (and the [Pushgateway](https://github.com/prometheus/pushgateway) address) in [`yaml/base/kubemarks-conf.yaml`](yaml/base/kubemarks-conf.yaml)
+1. Set the number of pods to be used for each benchmark in the [`yaml/base/kubemarks-num-pods.yaml`](yaml/base/kubemarks-num-pods.yaml) file
+1. Set the frequency with which benchmarks will be run in [`yaml/base/kubemarks-pkb-cronjob.yaml`](yaml/base/kubemarks-pkb-cronjob.yaml)
     ```yaml
     schedule: '0 * * * *'
     ```

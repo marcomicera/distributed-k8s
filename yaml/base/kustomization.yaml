@@ -1,7 +1,7 @@
 resources:
-  - dk8s-conf.yaml # benchmarks list, pushgateway address
-  - dk8s-role.yaml # PerfKit Benchmarker permissions
-  - dk8s-role-binding.yaml # associating Role to ServiceAccount
-  - dk8s-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
-  - dk8s-sa.yaml # ServiceAccount
-  - dk8s-num-pods.yaml # number of pods to be used for each benchmark
+  - kubemarks-conf.yaml # benchmarks list, pushgateway address
+  - kubemarks-role.yaml # PerfKit Benchmarker permissions
+  - kubemarks-role-binding.yaml # associating Role to ServiceAccount
+  - kubemarks-pkb-cronjob.yaml # PerfKit Benchmarker base CronJob file
+  - kubemarks-sa.yaml # ServiceAccount
+  - kubemarks-num-pods.yaml # number of pods to be used for each benchmark

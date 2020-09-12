@@ -3,4 +3,4 @@ data:
   benchmarks: iperf
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf

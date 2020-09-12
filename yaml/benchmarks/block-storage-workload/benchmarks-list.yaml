@@ -3,4 +3,4 @@ data:
   benchmarks: block_storage_workload
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf

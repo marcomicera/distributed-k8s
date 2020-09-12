@@ -3,4 +3,4 @@ data:
   benchmarks: cluster_boot
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf

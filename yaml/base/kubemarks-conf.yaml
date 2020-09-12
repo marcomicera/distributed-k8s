@@ -6,4 +6,4 @@ data:
   pushgateway: pushgateway.address.test
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf

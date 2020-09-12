@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: dk8s-pkb
+  name: kubemarks-pkb
 spec:
   concurrencyPolicy: Allow
   jobTemplate:
@@ -18,39 +18,39 @@ spec:
                 - name: PUSHGATEWAY
                   valueFrom:
                     configMapKeyRef:
-                      name: dk8s-conf
+                      name: kubemarks-conf
                       key: pushgateway
                 - name: BENCHMARKS_TO_RUN
                   valueFrom:
                     configMapKeyRef:
-                      name: dk8s-conf
+                      name: kubemarks-conf
                       key: benchmarks
-              image: marcomicera/dk8s-cronjob:latest
-              name: dk8s-pkb
+              image: marcomicera/kubemarks-cronjob:latest
+              name: kubemarks-pkb
               resources: {}
               volumeMounts:
-                - name: dk8s-root
+                - name: kubemarks-root
                   mountPath: /home/root
-                - mountPath: /home/root/distributed-k8s/dk8s-num-pods.yaml
-                  name: dk8s-num-pods
+                - mountPath: /home/root/kubemarks/kubemarks-num-pods.yaml
+                  name: kubemarks-num-pods
                   readOnly: true
-                  subPath: dk8s-num-pods.yaml
+                  subPath: kubemarks-num-pods.yaml
           initContainers:
             - name: git-sync
               image: k8s.gcr.io/git-sync:v3.1.5
               env:
                 - name: GIT_SYNC_REPO
-                  value: https://github.com/marcomicera/distributed-k8s.git
+                  value: https://github.com/marcomicera/kubemarks.git
                 - name: GIT_SYNC_ROOT
                   value: /home/root
                 - name: GIT_SYNC_DEST
-                  value: distributed-k8s
+                  value: kubemarks
                 - name: GIT_SYNC_BRANCH
                   value: master
                 - name: GIT_SYNC_ONE_TIME # exit after the initial checkout
                   value: "1"
               volumeMounts:
-                - name: dk8s-root
+                - name: kubemarks-root
                   mountPath: /home/root
               securityContext:
                 runAsUser: 65533 # git-sync user
@@ -59,12 +59,12 @@ spec:
                 capabilities:
                   drop: ["all"]
               imagePullPolicy: Always
-          serviceAccountName: dk8s
+          serviceAccountName: kubemarks
           volumes:
-            - name: dk8s-root
+            - name: kubemarks-root
               emptyDir: {}
-            - name: dk8s-num-pods
+            - name: kubemarks-num-pods
               configMap:
-                name: dk8s-num-pods
+                name: kubemarks-num-pods
   schedule: '0 * * * *'
 status: {}

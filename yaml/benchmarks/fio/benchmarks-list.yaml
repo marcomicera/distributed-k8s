@@ -3,4 +3,4 @@ data:
   benchmarks: fio
 kind: ConfigMap
 metadata:
-  name: dk8s-conf
+  name: kubemarks-conf
